@@ -1,0 +1,17 @@
+{
+  "name": "aegis-protocol",
+  "version": "1.0.0",
+  "description": "Aegis Protocol - Near-Future City Governance Simulator",
+  "scripts": {
+    "dev": "npx http-server -p 8080"
+  },
+  "keywords": [
+    "game",
+    "simulation",
+    "real-time",
+    "indie",
+    "cyberpunk"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}

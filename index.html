@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS PROTOCOL // Metropolitan Control Regime</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2305080c'/><polygon points='16,4 28,26 4,26' fill='none' stroke='%2300f0ff' stroke-width='2'/><rect x='14.5' y='13' width='3' height='8' fill='%2300f0ff'/><rect x='14.5' y='23' width='3' height='3' fill='%2300f0ff'/></svg>">
+  <link rel="stylesheet" href="src/style.css">
+  <!-- Google Fonts for premium technical display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="crt">
+  <!-- Scanline Overlay -->
+  <div class="scanlines"></div>
+  <div class="screen-flicker"></div>
+  
+  <div id="app" class="hud-container">
+    <!-- Header bar -->
+    <header class="hud-header">
+      <div class="header-logo">
+        <span class="warning-blink">▲</span> AEGIS CONSOLE <span class="version">v9.2.8_META</span>
+      </div>
+      <div class="header-ticker">
+        <div class="ticker-content" id="headerTicker">CONNECTING SECURE METROPOLITAN COMM-LINK... ACTIVE</div>
+      </div>
+      <div class="header-status">
+        <span class="status-label">REGIME THREAT:</span>
+        <span id="threatLevel" class="status-value threat-low">STABLE</span>
+      </div>
+      <div class="time-controls">
+        <button id="btnSpeed0" class="time-btn">PAUSE</button>
+        <button id="btnSpeed1" class="time-btn active">1X</button>
+        <button id="btnSpeed2" class="time-btn">2X</button>
+        <span class="game-time" id="gameTime">00:00:00</span>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="hud-main">
+      
+      <!-- LEFT PANEL: Core Metrics and Directives -->
+      <aside class="panel panel-left floating-overlay" id="panelLeft">
+        <div class="panel-header">SYSTEM METRICS & DIRECTIVES</div>
+        <div class="panel-body">
+          
+          <!-- Key Metrics Group -->
+          <div class="metrics-section">
+            <div class="metric-card" title="Compliance represents the citizens' submission to your rules. Achieve 90%+ in all districts to finalize the model.">
+              <div class="metric-info">
+                <span class="metric-title">CIVIC COMPLIANCE</span>
+                <span class="metric-val" id="metricCompliance">0%</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar bar-cyan" id="barCompliance" style="width: 0%"></div>
+              </div>
+            </div>
+            
+            <div class="metric-card" title="Public Trust measures the city's view of the AI registry. Drops to 0% cause systemic riots.">
+              <div class="metric-info">
+                <span class="metric-title">PUBLIC TRUST</span>
+                <span class="metric-val" id="metricTrust">100%</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar bar-green" id="barTrust" style="width: 100%"></div>
+              </div>
+            </div>
+            
+            <div class="metric-card" title="System Efficiency measures the performance of municipal flows. Drops to 0% causes total blackouts.">
+              <div class="metric-info">
+                <span class="metric-title">SYSTEM EFFICIENCY</span>
+                <span class="metric-val" id="metricEfficiency">100%</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar bar-yellow" id="barEfficiency" style="width: 100%"></div>
+              </div>
+            </div>
+
+            <div class="metric-row">
+              <div class="sub-metric">
+                <span class="sub-label">CREDITS:</span>
+                <span class="sub-value text-cyan" id="creditsValue">500</span>
+              </div>
+              <div class="sub-metric">
+                <span class="sub-label">AVG RISK:</span>
+                <span class="sub-value text-red" id="avgRiskValue">12%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider"></div>
+
+          <!-- Regime Telemetry Chart -->
+          <div class="sparkline-block">
+            <div class="sparkline-title">REGIME TELEMETRY — LAST 60s</div>
+            <canvas id="sparklineCanvas" width="295" height="64"></canvas>
+          </div>
+
+          <div class="section-divider"></div>
+
+          <!-- Governance Tools -->
+
+          <div class="tools-section">
+            <div class="section-title">FORBIDDEN GOVERNANCE MODULES</div>
+            <div class="tools-list" id="toolsList">
+              <!-- Dynamically populated tools -->
+            </div>
+          </div>
+          
+        </div>
+      </aside>
+
+      <!-- CENTER PANEL: Real-time Tactical City Grid (Background main canvas) -->
+      <main class="panel panel-center map-fullscreen">
+        <div class="panel-header map-hud-header">
+          <div class="map-tabs">
+            <button id="mapTabTactical" class="map-tab active">TACTICAL GRID</button>
+            <button id="mapTabHeatmap" class="map-tab">UNREST GLOW</button>
+            <button id="mapTabCoverage" class="map-tab">SURVEILLANCE RADAR</button>
+            <button id="mapTabEnergy" class="map-tab">POWER GRID</button>
+          </div>
+          <span id="selectedDistrictName" class="active-district-indicator">NO DISTRICT SELECTED</span>
+        </div>
+        
+        <div class="map-container" id="mapContainer">
+          <canvas id="cityCanvas"></canvas>
+          
+          <!-- Tactical HUD overlays -->
+          <div class="grid-crosshairs"></div>
+          <div class="hud-overlay-text top-left">GRID_LINK: ESTABLISHED</div>
+          <div class="hud-overlay-text top-right">SCANNER: ACTIVE</div>
+          <div class="hud-overlay-text bottom-left">AUTO_SWEEP: 25.4Hz</div>
+          <div class="hud-overlay-text bottom-right" id="mapCoordinates">COORD: 45.92 // 12.04</div>
+          
+          <!-- Floating UI elements directly over the canvas map -->
+          <div class="district-quick-telemetry floating-tel" id="districtTelemetry">
+            <div class="tel-grid-empty">SELECT DISTRICT FOR REGIME DATACARD</div>
+            <div class="tel-grid-content hidden" id="telGridContent">
+              <div class="tel-col">
+                <span class="tel-label">SECTOR:</span>
+                <span class="tel-value text-cyan" id="telName">APEX</span>
+              </div>
+              <div class="tel-col">
+                <span class="tel-label">CIVIC REBEL:</span>
+                <span class="tel-value text-red" id="telUnrest">0%</span>
+              </div>
+              <div class="tel-col">
+                <span class="tel-label">TRACKING:</span>
+                <span class="tel-value text-cyan" id="telSurveillance">0%</span>
+              </div>
+              <div class="tel-col">
+                <span class="tel-label">FRICTION:</span>
+                <span class="tel-value text-yellow" id="telFriction">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- RIGHT PANEL: Command Console & Narrative Feed -->
+      <aside class="panel panel-right floating-overlay">
+        <div class="panel-header">REGIME TRANSMISSIONS</div>
+        
+        <div class="narrative-container">
+          <!-- Chat / Log feed -->
+          <div class="terminal-logs" id="terminalLogs">
+            <!-- Simulated system boots here -->
+          </div>
+
+          <!-- Console input selector for narrative choice dialogues with vector portraits -->
+          <div class="console-dialogue-box hidden" id="dialogueBox">
+            <div class="dialogue-sender-profile">
+              <div class="profile-avatar-wrapper">
+                <canvas id="avatarCanvas" width="60" height="60"></canvas>
+              </div>
+              <div class="profile-sender-name" id="dialogueSenderName">SYSTEM LOG</div>
+            </div>
+            <div class="dialogue-prompt-col">
+              <div class="dialogue-prompt" id="dialoguePrompt">INITIATING EXTERNAL DIRECTIVE...</div>
+              <div class="dialogue-choices" id="dialogueChoices">
+                <!-- Choices buttons dynamically appended -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- Bottom Incident Ticker -->
+    <footer class="hud-footer">
+      <div class="incident-status">
+        <span class="incident-label">INCIDENT THREAT FEED:</span>
+      </div>
+      <div class="incidents-ticker-wrapper">
+        <div class="incidents-list" id="incidentsList">
+          <!-- Active warnings and incidents scroll here -->
+          <div class="incident-item no-incidents">SYSTEM OPERATING WITHIN TOLERANCE. NO ACTIVE THREATS.</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- End Game Screens Overlay -->
+  <div class="overlay-screen hidden" id="endScreen">
+    <div class="overlay-content">
+      <div class="warning-glow">▲ REGIME CONCLUDED ▲</div>
+      <h1 id="endTitle" class="end-title">PANOPTICON REALIZED</h1>
+      <div class="end-body" id="endBody">
+        Your algorithmic control regime has reached full stabilization. Nova-Veridia is an completely optimized, silent cage.
+      </div>
+      <div class="end-metrics" id="endMetrics">
+        <!-- Final metrics summarized here -->
+      </div>
+      <button class="restart-btn" id="btnRestart">RELOAD CLASSIFICATION SYSTEM</button>
+    </div>
+  </div>
+
+  <!-- Citizen Dossier Modal -->
+  <div class="overlay-screen hidden" id="dossierModal" role="dialog" aria-label="Citizen Dossier">
+    <div class="dos-container">
+      <!-- Header bar -->
+      <div class="dos-header">
+        <div class="dos-header-left">
+          <span class="dos-warning-icon warning-blink">▲</span>
+          <span class="dos-title">AEGIS // CITIZEN SURVEILLANCE DOSSIER</span>
+        </div>
+        <div class="dos-header-right">
+          <span id="dosTimestamp" class="dos-timestamp"></span>
+          <button class="dos-close-btn" id="dosCloseBtn">✕ CLOSE</button>
+        </div>
+      </div>
+
+      <!-- Body: face scan + core data -->
+      <div class="dos-body">
+
+        <!-- Left: Facial Scan -->
+        <div class="dos-face-col">
+          <div class="dos-face-wrapper">
+            <canvas id="dosFaceCanvas" width="120" height="140"></canvas>
+            <div class="dos-face-label">FACIAL SCAN // AEGIS-CAM</div>
+          </div>
+          <div id="dosMonitorBadge"></div>
+        </div>
+
+        <!-- Right: Identity + Scores -->
+        <div class="dos-info-col">
+          <div class="dos-name-block">
+            <div class="dos-name" id="dosName">—</div>
+            <div class="dos-sub-row">
+              <span class="dos-id" id="dosId">NV-00000-X</span>
+              <span class="dos-age" id="dosAge">AGE: —</span>
+            </div>
+            <div class="dos-occ" id="dosOcc">—</div>
+            <div class="dos-district-badge" id="dosDistrict">—</div>
+          </div>
+
+          <div class="dos-divider"></div>
+
+          <!-- Scores -->
+          <div class="dos-scores-grid">
+            <div class="dos-score-block">
+              <div class="dos-score-label">SOCIAL COMPLIANCE SCORE</div>
+              <div class="dos-score-row">
+                <div class="dos-score-bar-wrap">
+                  <div class="dos-score-bar" id="dosSocialBar"></div>
+                </div>
+                <span class="dos-score-val" id="dosSocialScore">—</span>
+              </div>
+            </div>
+            <div class="dos-score-block">
+              <div class="dos-score-label">ALGORITHMIC RISK SCORE</div>
+              <div class="dos-score-row">
+                <div class="dos-score-bar-wrap">
+                  <div class="dos-score-bar" id="dosRiskBar"></div>
+                </div>
+                <span class="dos-score-val" id="dosRiskScore">—</span>
+              </div>
+              <div class="dos-risk-tier" id="dosRiskTier">—</div>
+              <div class="dos-risk-desc" id="dosRiskDesc">—</div>
+            </div>
+          </div>
+
+          <div class="dos-divider"></div>
+
+          <!-- Status chips -->
+          <div class="dos-status-row">
+            <div class="dos-status-chip">
+              <span class="dos-status-lbl">WELFARE ELIGIBILITY:</span>
+              <span class="dos-status-val" id="dosWelfare">—</span>
+            </div>
+            <div class="dos-status-chip">
+              <span class="dos-status-lbl">TRANSIT PERMIT:</span>
+              <span class="dos-status-val" id="dosPermit">—</span>
+            </div>
+            <div class="dos-status-chip">
+              <span class="dos-status-lbl">LAST SIGHTED:</span>
+              <span class="dos-status-val text-cyan" id="dosLastSeen">—</span>
+            </div>
+            <div class="dos-status-chip">
+              <span class="dos-status-lbl">COVERAGE:</span>
+              <span class="dos-status-val" id="dosCoverage">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Behavioral Flags section -->
+      <div class="dos-flags-section">
+        <div class="dos-flags-title">BEHAVIOURAL FLAG REGISTRY</div>
+        <div class="dos-flags-container" id="dosFlagsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="dos-footer">
+        CLASSIFIED // AEGIS METROPOLITAN CONTROL AUTHORITY // UNAUTHORIZED ACCESS IS A CRIMINAL OFFENSE
+      </div>
+    </div>
+  </div>
+
+  <!-- Entry Script -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
