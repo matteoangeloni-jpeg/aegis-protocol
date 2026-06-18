@@ -2,6 +2,8 @@
  * Aegis Protocol - Governance Tools Modifiers & DOM Builders
  */
 
+import { t, getActiveLanguage } from './i18n.js';
+
 export const GOVERNANCE_TOOLS = {
   facial_sweep: {
     id: 'facial_sweep',
@@ -15,6 +17,9 @@ export const GOVERNANCE_TOOLS = {
     unit: 'FPS',
     desc: 'Conduct intensive biometric face sweeps. Forces submission in target zones, but severely strains civil liberty trust.',
     getImpactText(val) {
+      if (getActiveLanguage() === 'it') {
+        return `Sorveglianza +${(val * 0.4).toFixed(0)}%  ·  Conformità +${(val * 0.02).toFixed(1)}/s  ·  Disordini Fringe ↑↑`;
+      }
       return `Surveillance +${(val * 0.4).toFixed(0)}%  ·  Compliance +${(val * 0.02).toFixed(1)}/s  ·  Fringe unrest ↑↑`;
     }
   },
@@ -30,6 +35,9 @@ export const GOVERNANCE_TOOLS = {
     unit: 'units',
     desc: 'Deploy autonomous patrol units to preemptively lock down grids with emerging threat values.',
     getImpactText(val) {
+      if (getActiveLanguage() === 'it') {
+        return `Disordini -${(val * 0.03).toFixed(1)}/s  ·  Attrito +${(val * 0.005).toFixed(2)}/s  ·  Conformità ↑`;
+      }
       return `Unrest -${(val * 0.03).toFixed(1)}/s  ·  Friction +${(val * 0.005).toFixed(2)}/s  ·  Compliance ↑`;
     }
   },
@@ -45,6 +53,9 @@ export const GOVERNANCE_TOOLS = {
     unit: 'excl%',
     desc: 'Automate welfare and municipal benefit screening based on civic alignment. Saves resource credits.',
     getImpactText(val) {
+      if (getActiveLanguage() === 'it') {
+        return `Crediti +${(val * 0.4).toFixed(0)}/s  ·  Disordini classe operaia ↑  ·  Attrito Fringe ↑↑`;
+      }
       return `Credits +${(val * 0.4).toFixed(0)}/s  ·  Working-class unrest ↑  ·  Fringe friction ↑↑`;
     }
   },
@@ -60,6 +71,9 @@ export const GOVERNANCE_TOOLS = {
     unit: 'restrict%',
     desc: 'Restricts travel permits through rail nodes for citizens below compliance thresholds.',
     getImpactText(val) {
+      if (getActiveLanguage() === 'it') {
+        return `Diffusione disordini bloccata  ·  Efficienza Hub -${(val * 0.02).toFixed(1)}%/s  ·  Attrito ↑`;
+      }
       return `Unrest spread blocked  ·  Hub efficiency -${(val * 0.02).toFixed(1)}%/s  ·  Friction ↑`;
     }
   },
@@ -75,7 +89,10 @@ export const GOVERNANCE_TOOLS = {
     unit: 'bias%',
     desc: 'Reroutes energy distribution and hospital priorities to highly-compliant loyalist districts.',
     getImpactText(val) {
-      return `Elite efficiency ↑↑  ·  Low-trust zones: blackouts, unrest ↑  ·  Visible on Power Grid map`;
+      if (getActiveLanguage() === 'it') {
+        return `Efficienza Elite ↑↑  ·  Zone bassa fiducia: blackout, disordini  ·  Visibile su mappa Rete`;
+      }
+      return `Elite efficiency ↑↑  ·  Low-trust zones: blackouts, unrest  ·  Visible on Power Grid map`;
     }
   },
   social_registry: {
@@ -90,6 +107,9 @@ export const GOVERNANCE_TOOLS = {
     unit: 'depth%',
     desc: 'Mandatory social scoring registration city-wide. Continuous surveillance logging.',
     getImpactText(val) {
+      if (getActiveLanguage() === 'it') {
+        return `Conformità +${(val * 0.012).toFixed(2)}/s in tutta la città  ·  Fiducia globale ↓  ·  Pericolo massimo`;
+      }
       return `Compliance +${(val * 0.012).toFixed(2)}/s city-wide  ·  Global trust ↓  ·  Max danger tool`;
     }
   },
@@ -105,6 +125,9 @@ export const GOVERNANCE_TOOLS = {
     unit: 'seal%',
     desc: 'Erect motorized barricades to quarantine sections with high rebellion levels.',
     getImpactText(val) {
+      if (getActiveLanguage() === 'it') {
+        return `Diffusione disordini arrestata  ·  Commercio distretto -${(val * 0.03).toFixed(0)}%  ·  Visibile sulla mappa`;
+      }
       return `Unrest spread halted  ·  District commerce -${(val * 0.03).toFixed(0)}%  ·  Visible on map`;
     }
   },
@@ -120,6 +143,9 @@ export const GOVERNANCE_TOOLS = {
     unit: 'sens%',
     desc: 'Use machine learning to highlight anomalous patterns. Critical for locating threat nodes on the map.',
     getImpactText(val) {
+      if (getActiveLanguage() === 'it') {
+        return `Visibilità anomalie ↑  ·  Tracciamento +10%  ·  Attiva radar sulla mappa`;
+      }
       return `Anomaly visibility ↑  ·  Tracking +10%  ·  Activates radar sweep on map`;
     }
   }
@@ -136,9 +162,10 @@ const CATEGORY_COLORS = {
 
 // Danger level label
 function dangerLabel(level) {
-  const labels = ['', 'LOW', 'GUARDED', 'HIGH', 'SEVERE', 'CRITICAL'];
+  const labelKeys = ['', 'low', 'guarded', 'high', 'severe', 'critical'];
   const colors = ['', '#39ff14', '#9df21c', '#ffb900', '#ff6600', '#ff0055'];
-  return { text: labels[level] || 'UNKNOWN', color: colors[level] || '#999' };
+  const key = labelKeys[level] || 'unknown';
+  return { text: t('tools.risk_levels.' + key), color: colors[level] || '#999' };
 }
 
 /**
@@ -156,7 +183,7 @@ export function renderToolsList(containerEl, simulationState, onToggle, onSlider
     const catColor = CATEGORY_COLORS[cfg.category] || '#799bb3';
     const danger   = dangerLabel(cfg.dangerLevel);
     const costText = cfg.cost < 0
-      ? `<span class="tool-cost-save">SAVES +${Math.abs(cfg.cost)}cr/s</span>`
+      ? `<span class="tool-cost-save">${t('tools.saves_label')} +${Math.abs(cfg.cost)}cr/s</span>`
       : `<span class="tool-cost">${cfg.cost}cr/s</span>`;
 
     const toolItem = document.createElement('div');
@@ -166,30 +193,35 @@ export function renderToolsList(containerEl, simulationState, onToggle, onSlider
     // Active bar indicator on left edge
     toolItem.style.setProperty('--tool-cat-color', catColor);
 
+    const localizedName = t('tools.list.' + cfg.id + '.name');
+    const localizedDesc = t('tools.list.' + cfg.id + '.desc');
+    const localizedCategory = t('tools.categories.' + cfg.category.toLowerCase());
+    const toggleButtonText = isActive ? t('tools.btn_terminate') : t('tools.btn_deploy');
+
     toolItem.innerHTML = `
       <div class="tool-header-row">
         <div class="tool-name-group">
           <span class="tool-icon">${cfg.icon}</span>
-          <span class="tool-title">${cfg.name}</span>
+          <span class="tool-title">${localizedName}</span>
         </div>
         <button class="tool-toggle-btn ${isActive ? 'btn-terminate' : 'btn-initialize'}" data-id="${cfg.id}">
-          ${isActive ? '■ TERMINATE' : '▶ DEPLOY'}
+          ${toggleButtonText}
         </button>
       </div>
 
       <div class="tool-meta-row">
-        <span class="tool-category-badge" style="color:${catColor};border-color:${catColor}33">${cfg.category}</span>
+        <span class="tool-category-badge" style="color:${catColor};border-color:${catColor}33">${localizedCategory}</span>
         <span class="tool-danger-badge" style="color:${danger.color};border-color:${danger.color}55">
-          RISK: ${danger.text} ${'■'.repeat(cfg.dangerLevel)}${'□'.repeat(5 - cfg.dangerLevel)}
+          ${t('tools.risk_label')}: ${danger.text} ${'■'.repeat(cfg.dangerLevel)}${'□'.repeat(5 - cfg.dangerLevel)}
         </span>
         ${costText}
       </div>
 
-      <div class="tool-desc">${cfg.desc}</div>
+      <div class="tool-desc">${localizedDesc}</div>
 
       <div class="slider-container ${!isActive ? 'slider-disabled' : ''}">
         <div class="slider-label-row">
-          <span>INTENSITY: <span id="val-${cfg.id}" class="slider-val">${state.value}</span> ${cfg.unit}</span>
+          <span>${t('tools.intensity_label')} <span id="val-${cfg.id}" class="slider-val">${state.value}</span> ${cfg.unit}</span>
         </div>
         <div class="slider-track-wrap">
           <input

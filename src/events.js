@@ -3,6 +3,7 @@
  */
 
 import { DISTRICTS } from './simulation.js';
+import { t } from './i18n.js';
 
 export const STORY_EVENTS = [
   {
@@ -16,13 +17,13 @@ export const STORY_EVENTS = [
         text: 'Acknowledge directive. Lock down systems.',
         effect: (sim) => {
           sim.credits += 50;
-          return 'Command acknowledged. Allocated +50 credits for system tuning.';
+          return 'narrative.intro_directive.outcomes.0';
         }
       },
       {
         text: 'Review district socioeconomic files.',
         effect: (sim) => {
-          return 'Telemetry databases opened. Monitoring district compliance dynamics.';
+          return 'narrative.intro_directive.outcomes.1';
         }
       }
     ]
@@ -40,14 +41,14 @@ export const STORY_EVENTS = [
           sim.globalCompliance += 5;
           sim.globalTrust -= 5;
           sim.whistleblowerProgress = Math.max(0, sim.whistleblowerProgress - 10);
-          return 'Report logged. Comm-link re-encrypted. Ministry boosts compliance rating.';
+          return 'narrative.lumen_contact.outcomes.0';
         }
       },
       {
         text: 'Temporarily isolate the channel and listen.',
         effect: (sim) => {
           sim.whistleblowerProgress += 20;
-          return 'Link kept open. WHISTLEBLOWER connection integrity increased (+20%).';
+          return 'narrative.lumen_contact.outcomes.1';
         }
       }
     ]
@@ -66,7 +67,7 @@ export const STORY_EVENTS = [
           f.unrest = Math.max(0, f.unrest - 25);
           f.compliance = Math.min(100, f.compliance + 20);
           sim.globalTrust -= 10;
-          return 'Algorithmic strike suppression dispatched to Foundry Rows. Unrest crushed.';
+          return 'narrative.foundry_riot_risk.outcomes.0';
         }
       },
       {
@@ -77,7 +78,7 @@ export const STORY_EVENTS = [
           sim.globalTrust += 10;
           sim.credits -= 50;
           sim.whistleblowerProgress += 10;
-          return 'Welfare exclusion criteria relaxed. Union leaders pacified, costs increased.';
+          return 'narrative.foundry_riot_risk.outcomes.1';
         }
       }
     ]
@@ -94,7 +95,7 @@ export const STORY_EVENTS = [
         effect: (sim) => {
           sim.globalCompliance += 10;
           sim.whistleblowerProgress = 0;
-          return 'Hack source flagged. Biometric warrants generated. Aegis core locked.';
+          return 'narrative.lumen_leak_request.outcomes.0';
         }
       },
       {
@@ -104,7 +105,7 @@ export const STORY_EVENTS = [
           sim.whistleblowerProgress = Math.min(100, sim.whistleblowerProgress + 30);
           sim.globalTrust += 15;
           sim.globalEfficiency -= 15;
-          return 'Core registry keys leaked! System safety protocols breached. Terminal integrity unstable.';
+          return 'narrative.lumen_leak_request.outcomes.1';
         }
       }
     ]
@@ -125,7 +126,7 @@ export const STORY_EVENTS = [
           a.efficiency = 100;
           f.unrest = Math.min(100, f.unrest + 25);
           f.efficiency = Math.max(0, f.efficiency - 25);
-          return 'Services rerouted. Apex council fully satisfied. Outland Fringe metrics decay.';
+          return 'narrative.apex_service_demand.outcomes.0';
         }
       },
       {
@@ -136,7 +137,7 @@ export const STORY_EVENTS = [
           a.compliance = Math.max(0, a.compliance - 15);
           f.unrest = Math.max(0, f.unrest - 10);
           sim.globalTrust += 5;
-          return 'Prioritization denied. Apex council files formal complaints. Fringe trust preserved.';
+          return 'narrative.apex_service_demand.outcomes.1';
         }
       }
     ]
@@ -153,7 +154,7 @@ export const STORY_EVENTS = [
         effect: (sim) => {
           sim.globalCompliance = Math.min(100, sim.globalCompliance + 20);
           sim.whistleblowerProgress = 0;
-          return 'Target located and neutralized. Whistleblower threat terminated. panopticon compliance nearing maximum.';
+          return 'narrative.lumen_final_plea.outcomes.0';
         }
       },
       {
@@ -161,7 +162,7 @@ export const STORY_EVENTS = [
         effect: (sim) => {
           sim.whistleblowerProgress = 100;
           sim.leakSecurityKeys = true;
-          return 'ROOT ACCESS LEAKED. AEGIS CENTRAL REGISTER UNDERGOING DECRYPTION OVERRIDE.';
+          return 'narrative.lumen_final_plea.outcomes.1';
         }
       }
     ]
@@ -182,7 +183,7 @@ export const STORY_EVENTS = [
           sim.globalCompliance += 8;
           sim.districts[DISTRICTS.FRINGE].unrest += 12;
           sim.whistleblowerProgress = Math.max(0, sim.whistleblowerProgress - 5);
-          return 'Promotion confirmed. Budget boosted (+200cr). Social registry enforced in all districts.';
+          return 'narrative.ministry_promotion_offer.outcomes.0';
         }
       },
       {
@@ -190,7 +191,7 @@ export const STORY_EVENTS = [
         effect: (sim) => {
           sim.whistleblowerProgress += 10;
           sim.globalTrust += 5;
-          return 'Promotion deferred. Ministry memo filed. Trust in civil registry preserved — for now.';
+          return 'narrative.ministry_promotion_offer.outcomes.1';
         }
       }
     ]
@@ -207,7 +208,7 @@ export const STORY_EVENTS = [
         effect: (sim) => {
           sim.tools.anomaly_alerts.active = true;
           sim.globalTrust -= 8;
-          return 'VERA-9 broadcast triangulated and jammed. Leak suppressed. Trust impact absorbed.';
+          return 'narrative.journalist_expose.outcomes.0';
         }
       },
       {
@@ -217,7 +218,7 @@ export const STORY_EVENTS = [
           sim.whistleblowerProgress += 15;
           sim.districts[DISTRICTS.FRINGE].compliance -= 10;
           sim.districts[DISTRICTS.FRINGE].unrest += 10;
-          return 'Broadcast propagated. Fringe districts now aware of false-positive sweeps. Unrest rising.';
+          return 'narrative.journalist_expose.outcomes.1';
         }
       }
     ]
@@ -235,7 +236,7 @@ export const STORY_EVENTS = [
           sim.whistleblowerProgress += 25;
           sim.districts[DISTRICTS.HUB].unrest += 8;
           sim.globalEfficiency -= 5;
-          return 'Patrols diverted to Grid-8B. Resistance team active in Transit Hub. Evidence extraction underway.';
+          return 'narrative.lumen_safehouse.outcomes.0';
         }
       },
       {
@@ -244,7 +245,7 @@ export const STORY_EVENTS = [
           sim.tools.predictive_patrols.active = true;
           sim.whistleblowerProgress = Math.max(0, sim.whistleblowerProgress - 20);
           sim.globalCompliance += 5;
-          return 'Grid 7-C locked down. Patrol swarm dispatched. Resistance team dispersed. Data cores secured by Ministry.';
+          return 'narrative.lumen_safehouse.outcomes.1';
         }
       }
     ]
@@ -267,7 +268,7 @@ export const THRESHOLD_EVENTS = [
           fr.compliance = Math.min(100, fr.compliance + 15);
           sim.tools.automated_gatekeeping.active = true;
           sim.tools.automated_gatekeeping.value = 80;
-          return 'Fringe isolated. Quarantine gates dropped. Unrest containment active.';
+          return 'narrative.fringe_revolt_warning.outcomes.0';
         }
       },
       {
@@ -278,7 +279,7 @@ export const THRESHOLD_EVENTS = [
           fr.alertTriggered = true;
           hub.unrest = Math.min(100, hub.unrest + 15);
           sim.globalTrust += 5;
-          return 'Gates kept open. Commuters mix. Unrest leaking into the central transit corridor.';
+          return 'narrative.fringe_revolt_warning.outcomes.1';
         }
       }
     ]
@@ -297,7 +298,7 @@ export const THRESHOLD_EVENTS = [
           sim.tools.welfare_score.active = true;
           sim.globalEfficiency += 20;
           sim.credits += 100;
-          return 'Welfare scores optimized. Saved grid energy and credits (+100).';
+          return 'narrative.efficiency_collapse_warning.outcomes.0';
         }
       },
       {
@@ -308,7 +309,7 @@ export const THRESHOLD_EVENTS = [
           fo.efficiency = Math.max(0, fo.efficiency - 30);
           fo.unrest = Math.min(100, fo.unrest + 25);
           sim.globalEfficiency += 15;
-          return 'Industrial sectors throttled. Main server frame efficiency stabilized.';
+          return 'narrative.efficiency_collapse_warning.outcomes.1';
         }
       }
     ]
@@ -342,67 +343,50 @@ export function checkNarrativeEvents(simulationInstance) {
   return null;
 }
 export function getEndScreenContent(reason, simState) {
-  switch (reason) {
-    case 'VICTORY_PANOPTICON':
-      return {
-        title: 'THE ALGORITHMIC PANOPTICON',
-        body: 'You successfully pushed Civic Compliance above 90% across Nova-Veridia. Under your firm hand, the Aegis control model has been finalized and uploaded. Citizens move in perfect, predicted loops. Disobedience is mathematically impossible. You are promoted to Director General of National Security. The human soul is officially archived.',
-        metrics: [
-          { label: 'CIVIC COMPLIANCE', value: `${simState.globalCompliance}%` },
-          { label: 'PUBLIC TRUST', value: `${simState.globalTrust}% (SUBJUGATED)` },
-          { label: 'SYSTEM EFFICIENCY', value: `${simState.globalEfficiency}%` },
-          { label: 'COMPLETED IN', value: `${simState.gameTime} seconds` }
-        ]
-      };
-    case 'VICTORY_SYMBIO':
-      return {
-        title: 'THE SYMBIOTIC LIBERATION',
-        body: 'By cooperating with Lumen, you leaked the root encryption keycodes to the Aegis core. The citizen resistance triggered a clean system override. The server banks went dark for six seconds before booting back in an open, distributed model. The surveillance grid is shattered, and the experimental AI regime has collapsed. You are wanted by the Ministry, but you helped free a city.',
-        metrics: [
-          { label: 'CIVIC COMPLIANCE', value: `${simState.globalCompliance}% (REFUSED)` },
-          { label: 'PUBLIC TRUST', value: `${simState.globalTrust}% (LIBERATED)` },
-          { label: 'SYSTEM EFFICIENCY', value: `${simState.globalEfficiency}%` },
-          { label: 'COMPLETED IN', value: `${simState.gameTime} seconds` }
-        ]
-      };
-    case 'LOSS_REVOLT':
-      return {
-        title: 'THE ASH HEAP OF REVOLUTION',
-        body: 'Public Trust hit 0% or Average Unrest exceeded critical safety metrics. Citizens in the Outland Fringe breached the quarantine gates, surging into the Nexus Transit corridor and storming the Apex Heights. The automated control center was breached, and your console was disconnected by physical force. The city has escaped the algorithm—into complete, fiery chaos.',
-        metrics: [
-          { label: 'FINAL COMPLIANCE', value: `${simState.globalCompliance}%` },
-          { label: 'FINAL TRUST', value: '0% (TOTAL REBELLION)' },
-          { label: 'FINAL EFFICIENCY', value: `${simState.globalEfficiency}%` },
-          { label: 'SURVIVED FOR', value: `${simState.gameTime} seconds` }
-        ]
-      };
-    case 'LOSS_BLACKOUT':
-      return {
-        title: 'METROPOLITAN GRID BLACKOUT',
-        body: 'System Efficiency hit 0% due to cascading sabotage, worker strikes, and energy shortages. The servers went cold, the backup generators choked, and the Aegis AI shut down. The control regime is blind. The city remains dark, silent, and ungovernable. You have been decommissioned by the Ministry of Security.',
-        metrics: [
-          { label: 'FINAL COMPLIANCE', value: `${simState.globalCompliance}%` },
-          { label: 'FINAL TRUST', value: `${simState.globalTrust}%` },
-          { label: 'FINAL EFFICIENCY', value: '0% (GRID COLLAPSE)' },
-          { label: 'SURVIVED FOR', value: `${simState.gameTime} seconds` }
-        ]
-      };
-    case 'LOSS_PURGED':
-      return {
-        title: 'ADMINISTRATIVE PURGING',
-        body: 'You allowed Civic Compliance to fall below 15% for too long. The Ministry of Security has determined that your governance methodology lacks the "algorithmic spine" required to sustain the Aegis project. Your access tokens have been revoked. An automated replacement director has been assigned. You are scheduled for immediate biometric re-classification.',
-        metrics: [
-          { label: 'FINAL COMPLIANCE', value: `${simState.globalCompliance}% (INSUFFICIENT)` },
-          { label: 'FINAL TRUST', value: `${simState.globalTrust}%` },
-          { label: 'FINAL EFFICIENCY', value: `${simState.globalEfficiency}%` },
-          { label: 'SURVIVED FOR', value: `${simState.gameTime} seconds` }
-        ]
-      };
-    default:
-      return {
-        title: 'REGIME DISCONNECTED',
-        body: 'The simulation terminated under unclassified parameters.',
-        metrics: []
-      };
+  const reasonKey = reason.toLowerCase();
+  
+  // Custom metrics formatting based on outcome
+  let metrics = [];
+  if (reason === 'VICTORY_PANOPTICON') {
+    metrics = [
+      { label: t('endgame.victory_panopticon.label_compliance'), value: `${simState.globalCompliance}%` },
+      { label: t('endgame.victory_panopticon.label_trust'), value: `${simState.globalTrust}% (${t('endgame.victory_panopticon.value_trust')})` },
+      { label: t('endgame.victory_panopticon.label_efficiency'), value: `${simState.globalEfficiency}%` },
+      { label: t('endgame.victory_panopticon.label_completed'), value: `${simState.gameTime} ${t('endgame.victory_panopticon.value_time')}` }
+    ];
+  } else if (reason === 'VICTORY_SYMBIO') {
+    metrics = [
+      { label: t('endgame.victory_symbio.label_compliance'), value: `${simState.globalCompliance}% (${t('endgame.victory_symbio.value_compliance')})` },
+      { label: t('endgame.victory_symbio.label_trust'), value: `${simState.globalTrust}% (${t('endgame.victory_symbio.value_trust')})` },
+      { label: t('endgame.victory_symbio.label_efficiency'), value: `${simState.globalEfficiency}%` },
+      { label: t('endgame.victory_symbio.label_completed'), value: `${simState.gameTime} ${t('endgame.victory_symbio.value_time')}` }
+    ];
+  } else if (reason === 'LOSS_REVOLT') {
+    metrics = [
+      { label: t('endgame.loss_revolt.label_compliance'), value: `${simState.globalCompliance}%` },
+      { label: t('endgame.loss_revolt.label_trust'), value: `0% (${t('endgame.loss_revolt.value_trust')})` },
+      { label: t('endgame.loss_revolt.label_efficiency'), value: `${simState.globalEfficiency}%` },
+      { label: t('endgame.loss_revolt.label_survived'), value: `${simState.gameTime} ${t('endgame.loss_revolt.value_time')}` }
+    ];
+  } else if (reason === 'LOSS_BLACKOUT') {
+    metrics = [
+      { label: t('endgame.loss_blackout.label_compliance'), value: `${simState.globalCompliance}%` },
+      { label: t('endgame.loss_blackout.label_trust'), value: `${simState.globalTrust}%` },
+      { label: t('endgame.loss_blackout.label_efficiency'), value: `0% (${t('endgame.loss_blackout.value_efficiency')})` },
+      { label: t('endgame.loss_blackout.label_survived'), value: `${simState.gameTime} ${t('endgame.loss_blackout.value_time')}` }
+    ];
+  } else if (reason === 'LOSS_PURGED') {
+    metrics = [
+      { label: t('endgame.loss_purged.label_compliance'), value: `${simState.globalCompliance}% (${t('endgame.loss_purged.value_compliance')})` },
+      { label: t('endgame.loss_purged.label_trust'), value: `${simState.globalTrust}%` },
+      { label: t('endgame.loss_purged.label_efficiency'), value: `${simState.globalEfficiency}%` },
+      { label: t('endgame.loss_purged.label_survived'), value: `${simState.gameTime} ${t('endgame.loss_purged.value_time')}` }
+    ];
   }
+
+  return {
+    title: t(`endgame.${reasonKey}.title`),
+    body: t(`endgame.${reasonKey}.body`),
+    metrics
+  };
 }

@@ -17,23 +17,29 @@
   <div class="overlay-screen" id="mainMenu">
     <div class="menu-container">
       <div class="menu-header">
-        <span class="status-dot blink"></span> OPERATOR LOGIN PORTAL // VERIDIA SECURE AGENCY
+        <div>
+          <span class="status-dot blink"></span> <span data-i18n="menu.title">OPERATOR LOGIN PORTAL // VERIDIA SECURE AGENCY</span>
+        </div>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="it">IT</button>
+        </div>
       </div>
       <div class="menu-content">
         <div class="menu-logo-area">
-          <div class="menu-logo">AEGIS SYSTEM</div>
-          <div class="menu-subtitle">MUNICIPAL REGISTRY & CONTROL INTERFACE</div>
+          <div class="menu-logo" data-i18n="menu.system_title">AEGIS SYSTEM</div>
+          <div class="menu-subtitle" data-i18n="menu.subtitle">MUNICIPAL REGISTRY & CONTROL INTERFACE</div>
         </div>
         
         <div class="menu-options-panel">
-          <div class="menu-section-label">SYSTEM CONFIGURATION PROFILE</div>
+          <div class="menu-section-label" data-i18n="menu.section_profile">SYSTEM CONFIGURATION PROFILE</div>
           <div class="regime-profiles-grid">
             <div class="profile-card active" data-profile="standard">
               <div class="profile-card-header">
                 <span class="card-tag">SYS-STD</span>
-                <span class="card-title">STANDARD POLICY</span>
+                <span class="card-title" data-i18n="menu.profiles.standard.name">STANDARD POLICY</span>
               </div>
-              <p class="profile-desc">Balanced monitoring and credit reserve allocations. Standard predictive parameters.</p>
+              <p class="profile-desc" data-i18n="menu.profiles.standard.desc">Balanced monitoring and credit reserve allocations. Standard predictive parameters.</p>
               <div class="profile-stats">
                 <span>RESERVES: 500cr</span>
                 <span>COMPLIANCE: 30%</span>
@@ -44,9 +50,9 @@
             <div class="profile-card" data-profile="iron_shield">
               <div class="profile-card-header">
                 <span class="card-tag">ENF-09</span>
-                <span class="card-title">OPTIMIZED SEC</span>
+                <span class="card-title" data-i18n="menu.profiles.iron_shield.name">OPTIMIZED SEC</span>
               </div>
-              <p class="profile-desc">Compliance heavy. Pre-authorized tracking increases starting submission but depletes public trust.</p>
+              <p class="profile-desc" data-i18n="menu.profiles.iron_shield.desc">Compliance heavy. Pre-authorized tracking increases starting submission but depletes public trust.</p>
               <div class="profile-stats text-yellow">
                 <span>RESERVES: 350cr</span>
                 <span>COMPLIANCE: 45%</span>
@@ -57,9 +63,9 @@
             <div class="profile-card" data-profile="neural_test">
               <div class="profile-card-header">
                 <span class="card-tag">EXP-V04</span>
-                <span class="card-title">VOLATILE ALGO</span>
+                <span class="card-title" data-i18n="menu.profiles.neural_test.name">VOLATILE ALGO</span>
               </div>
-              <p class="profile-desc">High experimental funding, but the city exhibits a volatile grassroots friction baseline.</p>
+              <p class="profile-desc" data-i18n="menu.profiles.neural_test.desc">High experimental funding, but the city exhibits a volatile grassroots friction baseline.</p>
               <div class="profile-stats text-red">
                 <span>RESERVES: 800cr</span>
                 <span>COMPLIANCE: 20%</span>
@@ -69,25 +75,25 @@
           </div>
           
           <div class="menu-input-row">
-            <label for="regimeOperator">OPERATOR ID:</label>
+            <label for="regimeOperator" data-i18n="menu.input_operator">OPERATOR ID:</label>
             <input type="text" id="regimeOperator" value="ADMIN-982_VERIDIA" maxlength="16">
           </div>
           
-          <button class="menu-boot-btn" id="btnBootSystem">
+          <button class="menu-boot-btn" id="btnBootSystem" data-i18n="menu.btn_boot">
             CONNECT TO CITY MATRIX
           </button>
         </div>
         
         <div class="menu-sidebar-logs">
-          <div class="menu-section-label">BOOT TELEMETRY</div>
+          <div class="menu-section-label" data-i18n="menu.section_boot">BOOT TELEMETRY</div>
           <div class="menu-logs-box" id="menuLogsBox">
             <!-- Simulated logs print out automatically on load -->
           </div>
         </div>
       </div>
       <div class="menu-footer">
-        <span>STATE CODE: NOVA_VERIDIA_GIS</span>
-        <span>SYSTEM STATUS: AWAITING AUTHORIZATION...</span>
+        <span data-i18n="menu.footer_code">STATE CODE: NOVA_VERIDIA_GIS</span>
+        <span id="menuFooterStatus" data-i18n="menu.footer_status">SYSTEM STATUS: AWAITING AUTHORIZATION...</span>
       </div>
     </div>
   </div>
@@ -96,20 +102,24 @@
     <!-- Header bar -->
     <header class="hud-header">
       <div class="header-logo">
-        <span class="warning-blink">▲</span> AEGIS CONSOLE <span class="version">v9.2.8_META</span>
+        <span class="warning-blink">▲</span> <span data-i18n="hud.console">AEGIS CONSOLE</span> <span class="version">v9.2.8_META</span>
       </div>
       <div class="header-ticker">
         <div class="ticker-content" id="headerTicker">CONNECTING SECURE METROPOLITAN COMM-LINK... ACTIVE</div>
       </div>
       <div class="header-status">
-        <span class="status-label">REGIME THREAT:</span>
-        <span id="threatLevel" class="status-value threat-low">STABLE</span>
+        <span class="status-label" data-i18n="hud.threat_label">REGIME THREAT:</span>
+        <span id="threatLevel" class="status-value threat-low" data-i18n="hud.threat_levels.stable">STABLE</span>
       </div>
       <div class="time-controls">
-        <button id="btnSpeed0" class="time-btn">PAUSE</button>
-        <button id="btnSpeed1" class="time-btn active">1X</button>
-        <button id="btnSpeed2" class="time-btn">2X</button>
+        <button id="btnSpeed0" class="time-btn" data-i18n="hud.pause">PAUSE</button>
+        <button id="btnSpeed1" class="time-btn active" data-i18n="hud.speed1">1X</button>
+        <button id="btnSpeed2" class="time-btn" data-i18n="hud.speed2">2X</button>
         <span class="game-time" id="gameTime">00:00:00</span>
+      </div>
+      <div class="lang-selector-hud">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="it">IT</button>
       </div>
     </header>
 
@@ -118,14 +128,14 @@
       
       <!-- LEFT PANEL: Core Metrics and Directives -->
       <aside class="panel panel-left floating-overlay" id="panelLeft">
-        <div class="panel-header">SYSTEM METRICS & DIRECTIVES</div>
+        <div class="panel-header" data-i18n="metrics.title">SYSTEM METRICS & DIRECTIVES</div>
         <div class="panel-body">
           
           <!-- Key Metrics Group -->
           <div class="metrics-section">
-            <div class="metric-card" title="Compliance represents the citizens' submission to your rules. Achieve 90%+ in all districts to finalize the model.">
+            <div class="metric-card" id="cardCompliance" data-i18n-title="metrics.compliance_desc" title="Compliance represents the citizens' submission to your rules. Achieve 90%+ in all districts to finalize the model.">
               <div class="metric-info">
-                <span class="metric-title">CIVIC COMPLIANCE</span>
+                <span class="metric-title" data-i18n="metrics.compliance">CIVIC COMPLIANCE</span>
                 <span class="metric-val" id="metricCompliance">0%</span>
               </div>
               <div class="progress-bar-container">
@@ -133,9 +143,9 @@
               </div>
             </div>
             
-            <div class="metric-card" title="Public Trust measures the city's view of the AI registry. Drops to 0% cause systemic riots.">
+            <div class="metric-card" id="cardTrust" data-i18n-title="metrics.trust_desc" title="Public Trust measures the city's view of the AI registry. Drops to 0% cause systemic riots.">
               <div class="metric-info">
-                <span class="metric-title">PUBLIC TRUST</span>
+                <span class="metric-title" data-i18n="metrics.trust">PUBLIC TRUST</span>
                 <span class="metric-val" id="metricTrust">100%</span>
               </div>
               <div class="progress-bar-container">
@@ -143,9 +153,9 @@
               </div>
             </div>
             
-            <div class="metric-card" title="System Efficiency measures the performance of municipal flows. Drops to 0% causes total blackouts.">
+            <div class="metric-card" id="cardEfficiency" data-i18n-title="metrics.efficiency_desc" title="System Efficiency measures the performance of municipal flows. Drops to 0% causes total blackouts.">
               <div class="metric-info">
-                <span class="metric-title">SYSTEM EFFICIENCY</span>
+                <span class="metric-title" data-i18n="metrics.efficiency">SYSTEM EFFICIENCY</span>
                 <span class="metric-val" id="metricEfficiency">100%</span>
               </div>
               <div class="progress-bar-container">
@@ -155,11 +165,11 @@
 
             <div class="metric-row">
               <div class="sub-metric">
-                <span class="sub-label">CREDITS:</span>
+                <span class="sub-label" data-i18n="metrics.credits">CREDITS:</span>
                 <span class="sub-value text-cyan" id="creditsValue">500</span>
               </div>
               <div class="sub-metric">
-                <span class="sub-label">AVG RISK:</span>
+                <span class="sub-label" data-i18n="metrics.risk">AVG RISK:</span>
                 <span class="sub-value text-red" id="avgRiskValue">12%</span>
               </div>
             </div>
@@ -169,7 +179,7 @@
 
           <!-- Regime Telemetry Chart -->
           <div class="sparkline-block">
-            <div class="sparkline-title">REGIME TELEMETRY — LAST 60s</div>
+            <div class="sparkline-title" data-i18n="metrics.chart_title">REGIME TELEMETRY — LAST 60s</div>
             <canvas id="sparklineCanvas" width="295" height="64"></canvas>
           </div>
 
@@ -178,7 +188,7 @@
           <!-- Governance Tools -->
 
           <div class="tools-section">
-            <div class="section-title">FORBIDDEN GOVERNANCE MODULES</div>
+            <div class="section-title" data-i18n="tools.title">FORBIDDEN GOVERNANCE MODULES</div>
             <div class="tools-list" id="toolsList">
               <!-- Dynamically populated tools -->
             </div>
@@ -191,12 +201,12 @@
       <main class="panel panel-center map-fullscreen">
         <div class="panel-header map-hud-header">
           <div class="map-tabs">
-            <button id="mapTabTactical" class="map-tab active">TACTICAL GRID</button>
-            <button id="mapTabHeatmap" class="map-tab">UNREST GLOW</button>
-            <button id="mapTabCoverage" class="map-tab">SURVEILLANCE RADAR</button>
-            <button id="mapTabEnergy" class="map-tab">POWER GRID</button>
+            <button id="mapTabTactical" class="map-tab active" data-i18n="hud.tab_tactical">TACTICAL GRID</button>
+            <button id="mapTabHeatmap" class="map-tab" data-i18n="hud.tab_unrest">UNREST GLOW</button>
+            <button id="mapTabCoverage" class="map-tab" data-i18n="hud.tab_coverage">SURVEILLANCE RADAR</button>
+            <button id="mapTabEnergy" class="map-tab" data-i18n="hud.tab_energy">POWER GRID</button>
           </div>
-          <span id="selectedDistrictName" class="active-district-indicator">NO DISTRICT SELECTED</span>
+          <span id="selectedDistrictName" class="active-district-indicator" data-i18n="hud.selected_empty_map">NO DISTRICT SELECTED</span>
         </div>
         
         <div class="map-container" id="mapContainer">
@@ -204,29 +214,29 @@
           
           <!-- Tactical HUD overlays -->
           <div class="grid-crosshairs"></div>
-          <div class="hud-overlay-text top-left">GRID_LINK: ESTABLISHED</div>
-          <div class="hud-overlay-text top-right">SCANNER: ACTIVE</div>
-          <div class="hud-overlay-text bottom-left">AUTO_SWEEP: 25.4Hz</div>
+          <div class="hud-overlay-text top-left" data-i18n="hud.gps_lock">GRID_LINK: ESTABLISHED</div>
+          <div class="hud-overlay-text top-right" data-i18n="hud.scanner_status">SCANNER: ACTIVE</div>
+          <div class="hud-overlay-text bottom-left" data-i18n="hud.sweep_rate">AUTO_SWEEP: 25.4Hz</div>
           <div class="hud-overlay-text bottom-right" id="mapCoordinates">COORD: 45.92 // 12.04</div>
           
           <!-- Floating UI elements directly over the canvas map -->
           <div class="district-quick-telemetry floating-tel" id="districtTelemetry">
-            <div class="tel-grid-empty">SELECT DISTRICT FOR REGIME DATACARD</div>
+            <div class="tel-grid-empty" data-i18n="hud.selected_empty">SELECT DISTRICT FOR REGIME DATACARD</div>
             <div class="tel-grid-content hidden" id="telGridContent">
               <div class="tel-col">
-                <span class="tel-label">SECTOR:</span>
+                <span class="tel-label" data-i18n="hud.label_sector">SECTOR:</span>
                 <span class="tel-value text-cyan" id="telName">APEX</span>
               </div>
               <div class="tel-col">
-                <span class="tel-label">CIVIC REBEL:</span>
+                <span class="tel-label" data-i18n="hud.label_rebel">CIVIC REBEL:</span>
                 <span class="tel-value text-red" id="telUnrest">0%</span>
               </div>
               <div class="tel-col">
-                <span class="tel-label">TRACKING:</span>
+                <span class="tel-label" data-i18n="hud.label_tracking">TRACKING:</span>
                 <span class="tel-value text-cyan" id="telSurveillance">0%</span>
               </div>
               <div class="tel-col">
-                <span class="tel-label">FRICTION:</span>
+                <span class="tel-label" data-i18n="hud.label_friction">FRICTION:</span>
                 <span class="tel-value text-yellow" id="telFriction">0%</span>
               </div>
             </div>
@@ -236,7 +246,7 @@
 
       <!-- RIGHT PANEL: Command Console & Narrative Feed -->
       <aside class="panel panel-right floating-overlay">
-        <div class="panel-header">REGIME TRANSMISSIONS</div>
+        <div class="panel-header" data-i18n="narrative.dialogue_log">REGIME TRANSMISSIONS</div>
         
         <div class="narrative-container">
           <!-- Chat / Log feed -->
@@ -250,7 +260,7 @@
               <div class="profile-avatar-wrapper">
                 <canvas id="avatarCanvas" width="60" height="60"></canvas>
               </div>
-              <div class="profile-sender-name" id="dialogueSenderName">SYSTEM LOG</div>
+              <div class="profile-sender-name" id="dialogueSenderName" data-i18n="narrative.dialogue_log">SYSTEM LOG</div>
             </div>
             <div class="dialogue-prompt-col">
               <div class="dialogue-prompt" id="dialoguePrompt">INITIATING EXTERNAL DIRECTIVE...</div>
@@ -267,12 +277,12 @@
     <!-- Bottom Incident Ticker -->
     <footer class="hud-footer">
       <div class="incident-status">
-        <span class="incident-label">INCIDENT THREAT FEED:</span>
+        <span class="incident-label" data-i18n="incident.title">INCIDENT THREAT FEED:</span>
       </div>
       <div class="incidents-ticker-wrapper">
         <div class="incidents-list" id="incidentsList">
           <!-- Active warnings and incidents scroll here -->
-          <div class="incident-item no-incidents">SYSTEM OPERATING WITHIN TOLERANCE. NO ACTIVE THREATS.</div>
+          <div class="incident-item no-incidents" data-i18n="incident.none">SYSTEM OPERATING WITHIN TOLERANCE. NO ACTIVE THREATS.</div>
         </div>
       </div>
     </footer>
@@ -282,14 +292,14 @@
   <div class="overlay-screen hidden" id="endScreen">
     <div class="overlay-content">
       <div class="warning-glow">▲ REGIME CONCLUDED ▲</div>
-      <h1 id="endTitle" class="end-title">PANOPTICON REALIZED</h1>
-      <div class="end-body" id="endBody">
+      <h1 id="endTitle" class="end-title" data-i18n="endgame.title_win">PANOPTICON REALIZED</h1>
+      <div class="end-body" id="endBody" data-i18n="endgame.win_desc">
         Your algorithmic control regime has reached full stabilization. Nova-Veridia is an completely optimized, silent cage.
       </div>
       <div class="end-metrics" id="endMetrics">
         <!-- Final metrics summarized here -->
       </div>
-      <button class="restart-btn" id="btnRestart">RELOAD CLASSIFICATION SYSTEM</button>
+      <button class="restart-btn" id="btnRestart" data-i18n="endgame.restart">RELOAD CLASSIFICATION SYSTEM</button>
     </div>
   </div>
 
@@ -300,11 +310,11 @@
       <div class="dos-header">
         <div class="dos-header-left">
           <span class="dos-warning-icon warning-blink">▲</span>
-          <span class="dos-title">AEGIS // CITIZEN SURVEILLANCE DOSSIER</span>
+          <span class="dos-title" data-i18n="dossier.title">AEGIS // CITIZEN SURVEILLANCE DOSSIER</span>
         </div>
         <div class="dos-header-right">
           <span id="dosTimestamp" class="dos-timestamp"></span>
-          <button class="dos-close-btn" id="dosCloseBtn">✕ CLOSE</button>
+          <button class="dos-close-btn" id="dosCloseBtn" data-i18n="dossier.btn_close">✕ CLOSE</button>
         </div>
       </div>
 
@@ -315,7 +325,7 @@
         <div class="dos-face-col">
           <div class="dos-face-wrapper">
             <canvas id="dosFaceCanvas" width="120" height="140"></canvas>
-            <div class="dos-face-label">FACIAL SCAN // AEGIS-CAM</div>
+            <div class="dos-face-label" data-i18n="dossier.scan_title">FACIAL SCAN // AEGIS-CAM</div>
           </div>
           <div id="dosMonitorBadge"></div>
         </div>
@@ -337,7 +347,7 @@
           <!-- Scores -->
           <div class="dos-scores-grid">
             <div class="dos-score-block">
-              <div class="dos-score-label">SOCIAL COMPLIANCE SCORE</div>
+              <div class="dos-score-label" data-i18n="dossier.social_score">SOCIAL COMPLIANCE SCORE</div>
               <div class="dos-score-row">
                 <div class="dos-score-bar-wrap">
                   <div class="dos-score-bar" id="dosSocialBar"></div>
@@ -346,7 +356,7 @@
               </div>
             </div>
             <div class="dos-score-block">
-              <div class="dos-score-label">ALGORITHMIC RISK SCORE</div>
+              <div class="dos-score-label" data-i18n="dossier.risk_profile">ALGORITHMIC RISK SCORE</div>
               <div class="dos-score-row">
                 <div class="dos-score-bar-wrap">
                   <div class="dos-score-bar" id="dosRiskBar"></div>
@@ -363,19 +373,19 @@
           <!-- Status chips -->
           <div class="dos-status-row">
             <div class="dos-status-chip">
-              <span class="dos-status-lbl">WELFARE ELIGIBILITY:</span>
+              <span class="dos-status-lbl" data-i18n="dossier.welfare_status">WELFARE CLEARANCE</span>
               <span class="dos-status-val" id="dosWelfare">—</span>
             </div>
             <div class="dos-status-chip">
-              <span class="dos-status-lbl">TRANSIT PERMIT:</span>
+              <span class="dos-status-lbl" data-i18n="dossier.permit_status">TRANSIT PERMIT</span>
               <span class="dos-status-val" id="dosPermit">—</span>
             </div>
             <div class="dos-status-chip">
-              <span class="dos-status-lbl">LAST SIGHTED:</span>
+              <span class="dos-status-lbl" data-i18n="dossier.last_seen">LAST SIGHTED:</span>
               <span class="dos-status-val text-cyan" id="dosLastSeen">—</span>
             </div>
             <div class="dos-status-chip">
-              <span class="dos-status-lbl">COVERAGE:</span>
+              <span class="dos-status-lbl" data-i18n="dossier.coverage">COVERAGE:</span>
               <span class="dos-status-val" id="dosCoverage">—</span>
             </div>
           </div>
@@ -384,13 +394,13 @@
 
       <!-- Behavioral Flags section -->
       <div class="dos-flags-section">
-        <div class="dos-flags-title">BEHAVIOURAL FLAG REGISTRY</div>
+        <div class="dos-flags-title" data-i18n="dossier.behavioral_flags">BEHAVIOURAL FLAG REGISTRY</div>
         <div class="dos-flags-container" id="dosFlagsContainer">
           <!-- Populated by JS -->
         </div>
       </div>
 
-      <div class="dos-footer">
+      <div class="dos-footer" data-i18n="dossier.footer">
         CLASSIFIED // AEGIS METROPOLITAN CONTROL AUTHORITY // UNAUTHORIZED ACCESS IS A CRIMINAL OFFENSE
       </div>
     </div>

@@ -1,6 +1,4 @@
-/**
- * Aegis Protocol - Core Simulation Engine
- */
+import { getActiveLanguage, t } from './i18n.js';
 
 export const DISTRICTS = {
   APEX: 'apex',
@@ -387,7 +385,23 @@ export class CitySimulation {
   }
 
   processAnomalies() {
-    const SPAWN_MESSAGES = {
+    const activeLang = getActiveLanguage();
+    const SPAWN_MESSAGES = activeLang === 'it' ? {
+      DIVERGENT_FLOW: [
+        (d) => `Rilevata deviazione del flusso di transito in ${d.name}. Persone coinvolte: ${2 + Math.floor(Math.random()*8)}.`,
+        (d) => `Assembramento non autorizzato segnalato in ${d.name}. Richiesta scansione dei permessi.`,
+        (d) => `Discrepanza biometrica registrata nel checkpoint di ${d.name}. Margine di errore: 31%.`,
+        (d) => `FLUSSO_DIVERGENTE: ${d.name} — ${Math.floor(Math.random()*900+100)} soggetti fuori zona consentita.`,
+        (d) => `Raduno non registrato rilevato vicino al perimetro di ${d.name}. Folla stimata: ${5+Math.floor(Math.random()*20)}.`
+      ],
+      ENCRYPTED_SIGNAL: [
+        (d) => `Intercettata trasmissione crittografata in ${d.name}. Origine: ignota. Impronta: tipo LUMEN.`,
+        (d) => `SEGNALE_CRITTOGRAFATO: Canale radio illegale attivo in ${d.name}. Canale: E2E-${Math.floor(Math.random()*900+100)}.`,
+        (d) => `Pacchetto dati anti-regime bloccato nel nodo di ${d.name}. Origine: irrisolta.`,
+        (d) => `Frammento di rete mesh sicuro rilevato in ${d.name}. Decrittazione: FALLITA.`,
+        (d) => `Anomalia di segnale: ${d.name} — dispositivo non registrato trasmette su frequenze protette.`
+      ]
+    } : {
       DIVERGENT_FLOW: [
         (d) => `Movement pattern deviation detected in ${d.name}. Subject count: ${2 + Math.floor(Math.random()*8)}.`,
         (d) => `Unauthorized transit cluster flagged in ${d.name}. Transit permit scan queued.`,
@@ -426,7 +440,19 @@ export class CitySimulation {
   }
 
   triggerAnomalyEscalation(district, anomaly) {
-    const ESCALATION_MESSAGES = {
+    const activeLang = getActiveLanguage();
+    const ESCALATION_MESSAGES = activeLang === 'it' ? {
+      DIVERGENT_FLOW: [
+        `RIVOLTA: I disordini a ${district.name} hanno superato il contenimento. Perimetro compromesso.`,
+        `CRISI: Il gruppo di protesta a ${district.name} è diventato violento. Pattuglie sovraccariche.`,
+        `ALLARME: Sciopero di massa organizzato a ${district.name}. Nodo di transito bloccato.`
+      ],
+      ENCRYPTED_SIGNAL: [
+        `FUGA DATI: Chiavi del terminale rubate da ${district.name}. Integrità registro: COMPROMESSA.`,
+        `SABOTAGGIO: Segnale radio pirata oscura le telecamere a ${district.name}. Camere: ACCECATE.`,
+        `HACK: Nodo di ${district.name} infiltrato. Rilasciato pacchetto dati whistleblower.`
+      ]
+    } : {
       DIVERGENT_FLOW: [
         `RIOT: Localized unrest in ${district.name} breached containment. Civil perimeter compromised.`,
         `CRISIS: Protest cluster in ${district.name} turned violent. Patrol units overwhelmed.`,
@@ -465,7 +491,12 @@ export class CitySimulation {
       
       if (d.anomalies.length < initialCount) {
         this.credits += 25; // reward
-        this.addIncident('RESOLVED', `Threat ${anomalyId} neutralized in ${d.name}. +25 Credits.`, 'nominal', districtId);
+        const activeLang = getActiveLanguage();
+        const distName = t('districts.' + d.id + '.name');
+        const resolvedMsg = activeLang === 'it'
+          ? `Minaccia ${anomalyId} neutralizzata in ${distName}. +25 Crediti.`
+          : `Threat ${anomalyId} neutralized in ${distName}. +25 Credits.`;
+        this.addIncident('RESOLVED', resolvedMsg, 'nominal', districtId);
         return true;
       }
     }

@@ -3,6 +3,7 @@
  */
 
 import { getEndScreenContent } from './events.js';
+import { t, getActiveLanguage } from './i18n.js';
 
 // Procedural audio synthesizer using Web Audio API
 export class SynthAudio {
@@ -122,6 +123,8 @@ export const synthAudio = new SynthAudio();
 export class GameUI {
   constructor(simulationInstance) {
     this.sim = simulationInstance;
+    this.activeDialogueObj = null;
+    this.activeOnChoiceSelected = null;
     
     // Bind elements
     this.elements = {
@@ -209,18 +212,18 @@ export class GameUI {
     // Dynamic Regime Threat Labels
     const alertFrame = document.getElementById('alertFrame');
     if (this.sim.globalRisk > 60 || this.sim.globalTrust < 30) {
-      el.threatLevel.textContent = 'CRITICAL THREAT';
+      el.threatLevel.textContent = t('hud.threat_levels.critical');
       el.threatLevel.className = 'status-value threat-high';
       if (alertFrame) alertFrame.style.display = 'block';
       if (this.sim.gameTime % 5 === 0) {
         synthAudio.playAlarm();
       }
     } else if (this.sim.globalRisk > 35) {
-      el.threatLevel.textContent = 'MUTINOUS';
+      el.threatLevel.textContent = t('hud.threat_levels.mutinous');
       el.threatLevel.className = 'status-value threat-med';
       if (alertFrame) alertFrame.style.display = 'none';
     } else {
-      el.threatLevel.textContent = 'STABLE';
+      el.threatLevel.textContent = t('hud.threat_levels.stable');
       el.threatLevel.className = 'status-value threat-low';
       if (alertFrame) alertFrame.style.display = 'none';
     }
@@ -312,7 +315,7 @@ export class GameUI {
       el.telGridEmpty.classList.add('hidden');
       el.telGridContent.classList.remove('hidden');
 
-      el.telName.textContent = d.name.toUpperCase();
+      el.telName.textContent = t('districts.' + d.id + '.name').toUpperCase();
       el.telUnrest.textContent = `${Math.round(d.unrest)}%`;
       el.telSurveillance.textContent = `${Math.round(d.surveillance)}%`;
       el.telFriction.textContent = `${Math.round(d.friction)}%`;
@@ -335,18 +338,22 @@ export class GameUI {
     
     const time = this.sim.formatTime(this.sim.gameTime);
     
-    let senderName = 'SYSTEM';
+    const activeLang = getActiveLanguage();
+    let senderName = activeLang === 'it' ? 'SISTEMA' : 'SYSTEM';
     let senderClass = 'sender-system';
     
     if (sender === 'ministry') {
-      senderName = 'MINISTRY';
+      senderName = activeLang === 'it' ? 'MINISTERO' : 'MINISTRY';
       senderClass = 'sender-ministry';
     } else if (sender === 'lumen') {
       senderName = 'LUMEN // HACK';
       senderClass = 'sender-lumen';
     } else if (sender === 'warning') {
-      senderName = 'ALERT';
+      senderName = activeLang === 'it' ? 'ALLERTA' : 'ALERT';
       senderClass = 'sender-warning';
+    } else if (sender === 'system') {
+      senderName = activeLang === 'it' ? 'SISTEMA' : 'SYSTEM';
+      senderClass = 'sender-system';
     }
 
     entry.innerHTML = `
@@ -509,7 +516,10 @@ export class GameUI {
   }
 
   showDialogue(dialogueObj, onChoiceSelected) {
+    this.activeDialogueObj = dialogueObj;
+    this.activeOnChoiceSelected = onChoiceSelected;
     const el = this.elements;
+    const activeLang = getActiveLanguage();
     
     el.dialogueBox.classList.remove('hidden');
     el.dialoguePrompt.textContent = '';
@@ -518,7 +528,15 @@ export class GameUI {
     // Set sender name
     const senderNameEl = document.getElementById('dialogueSenderName');
     if (senderNameEl) {
-      senderNameEl.textContent = dialogueObj.sender === 'lumen' ? 'LUMEN // HACK' : dialogueObj.sender.toUpperCase();
+      let senderName = dialogueObj.sender.toUpperCase();
+      if (dialogueObj.sender === 'lumen') {
+        senderName = 'LUMEN // HACK';
+      } else if (dialogueObj.sender === 'ministry') {
+        senderName = activeLang === 'it' ? 'MINISTERO' : 'MINISTRY';
+      } else if (dialogueObj.sender === 'warning') {
+        senderName = activeLang === 'it' ? 'ALLERTA' : 'ALERT';
+      }
+      senderNameEl.textContent = senderName;
     }
     
     // Draw vector profile card
@@ -529,24 +547,28 @@ export class GameUI {
     synthAudio.playAlarm();
 
     // Type prompt
-    this.queueTyping(el.dialoguePrompt, dialogueObj.prompt);
+    const localizedPrompt = t('narrative.' + dialogueObj.id + '.prompt');
+    this.queueTyping(el.dialoguePrompt, localizedPrompt);
 
     // Build choices
     dialogueObj.choices.forEach((choice, index) => {
       const btn = document.createElement('button');
       btn.className = 'choice-btn';
+      const localizedChoiceText = t('narrative.' + dialogueObj.id + '.choices.' + index);
       btn.innerHTML = `
         <span class="choice-key">[KEY_${index + 1}]</span>
-        <span class="choice-text">${choice.text}</span>
+        <span class="choice-text">${localizedChoiceText}</span>
       `;
       
       btn.addEventListener('click', () => {
         synthAudio.playToggle(true);
         el.dialogueBox.classList.add('hidden');
+        this.activeDialogueObj = null;
+        this.activeOnChoiceSelected = null;
         
         // Run effect
-        const logResult = choice.effect(this.sim);
-        this.logTerminalMessage(dialogueObj.sender, logResult);
+        const logResultKey = choice.effect(this.sim);
+        this.logTerminalMessage(dialogueObj.sender, t(logResultKey));
         
         // Callback
         onChoiceSelected();
@@ -561,7 +583,11 @@ export class GameUI {
     el.incidentsList.innerHTML = '';
 
     if (this.sim.incidents.length === 0) {
-      el.incidentsList.innerHTML = '<div class="incident-item no-incidents">SYSTEM OPERATING WITHIN TOLERANCE. NO ACTIVE THREATS.</div>';
+      const activeLang = getActiveLanguage();
+      const noIncidentsMsg = activeLang === 'it'
+        ? 'SISTEMA OPERATIVO IN TOLLERANZA. NESSUNA MINACCIA ATTIVA.'
+        : 'SYSTEM OPERATING WITHIN TOLERANCE. NO ACTIVE THREATS.';
+      el.incidentsList.innerHTML = `<div class="incident-item no-incidents">${noIncidentsMsg}</div>`;
       return;
     }
 

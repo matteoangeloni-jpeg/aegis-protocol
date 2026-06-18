@@ -7,7 +7,8 @@ import { TacticalMap } from './map.js';
 import { renderToolsList } from './tools.js';
 import { GameUI, synthAudio } from './ui.js';
 import { checkNarrativeEvents } from './events.js';
-import { generateCitizenProfile, openDossierModal, closeDossierModal } from './dossier.js';
+import { generateCitizenProfile, openDossierModal, closeDossierModal, updateActiveDossierTranslation } from './dossier.js';
+import { t, setLanguage, getActiveLanguage } from './i18n.js';
 
 class GameOrchestrator {
   constructor() {
@@ -43,7 +44,35 @@ class GameOrchestrator {
     // 4. Set up the operator login portal
     this.initMenu();
 
-    // 5. Start Game Loop
+    // 5. Bind language buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const lang = e.currentTarget.getAttribute('data-lang');
+        setLanguage(lang);
+        synthAudio.playToggle(true);
+      });
+    });
+
+    // 6. Listen to languagechanged
+    window.addEventListener('languagechanged', () => {
+      this.updateToolsList();
+      this.ui.updateSelectedDistrictTelemetry(this.selectedDistrictId);
+      const indicator = document.getElementById('selectedDistrictName');
+      if (indicator) {
+        const d = this.sim.districts[this.selectedDistrictId];
+        indicator.textContent = d ? t('districts.' + this.selectedDistrictId + '.name').toUpperCase() : t('hud.selected_empty_map');
+      }
+      if (this.ui.activeDialogueObj) {
+        this.ui.showDialogue(this.ui.activeDialogueObj, this.ui.activeOnChoiceSelected);
+      }
+      updateActiveDossierTranslation();
+      this.ui.updateMetrics();
+    });
+
+    // 7. Apply initial language (from storage or default)
+    setLanguage(getActiveLanguage());
+
+    // 8. Start Game Loop
     this.lastTickTime = performance.now();
     this.loop();
   }
@@ -219,7 +248,7 @@ class GameOrchestrator {
     const indicator = document.getElementById('selectedDistrictName');
     if (indicator) {
       const d = this.sim.districts[districtId];
-      indicator.textContent = d ? d.name.toUpperCase() : 'NO DISTRICT SELECTED';
+      indicator.textContent = d ? t('districts.' + districtId + '.name').toUpperCase() : t('hud.selected_empty_map');
     }
   }
 
@@ -247,8 +276,11 @@ class GameOrchestrator {
     synthAudio.playToggle(isNowActive);
     
     // Terminal logging for realism
-    const toolName = this.sim.tools[toolId].name;
-    const actionText = isNowActive ? 'INITIALIZED // ACTIVE' : 'TERMINATED // SYSTEM DEACTIVATED';
+    const activeLang = getActiveLanguage();
+    const toolName = t('tools.list.' + toolId + '.name');
+    const actionText = isNowActive
+      ? (activeLang === 'it' ? 'INIZIALIZZATO // ATTIVO' : 'INITIALIZED // ACTIVE')
+      : (activeLang === 'it' ? 'TERMINATO // DISATTIVATO' : 'TERMINATED // SYSTEM DEACTIVATED');
     this.ui.logTerminalMessage('system', `Module [${toolName.toUpperCase()}] ${actionText}.`);
 
     // Redraw list to disable sliders if off

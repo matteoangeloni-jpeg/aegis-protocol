@@ -1,3 +1,13 @@
+import { t } from './i18n.js';
+
+let currentProfile = null;
+
+export function updateActiveDossierTranslation() {
+  if (currentProfile) {
+    openDossierModal(currentProfile);
+  }
+}
+
 /**
  * Aegis Protocol – Citizen Dossier System
  * Procedurally generates surveillance profiles for city inhabitants.
@@ -74,9 +84,9 @@ export function generateCitizenProfile(civilian, simulationState) {
   // Age
   const age = 18 + Math.floor(rand() * 55);
 
-  // Occupation
+  // Occupation Index
   const occs = OCCUPATIONS[districtId] || OCCUPATIONS.hub;
-  const occupation = occs[Math.floor(rand() * occs.length)];
+  const occupationIdx = Math.floor(rand() * occs.length);
 
   // Social score base: district compliance drives it
   const baseScore = Math.max(5, Math.min(100, district.compliance + (rand() * 40 - 20)));
@@ -91,30 +101,24 @@ export function generateCitizenProfile(civilian, simulationState) {
 
   // Welfare eligibility: low social score = excluded
   const welfareEligible = socialScore >= 55 || !simulationState.tools.welfare_score.active;
-  const welfareStatus = welfareEligible
-    ? { label: 'ELIGIBLE', color: '#39ff14' }
-    : { label: 'EXCLUDED — AI SCORED', color: '#ff0055' };
 
   // Transit permit: gatekeeping tool
   const hasPermit = socialScore >= 45 || !simulationState.tools.permit_filter.active;
-  const permitStatus = hasPermit
-    ? { label: 'VALID', color: '#39ff14' }
-    : { label: 'REVOKED — SCORE THRESHOLD', color: '#ff0055' };
 
   // Behavioral flags: more flags for higher risk / lower compliance districts
   const flagCount = Math.floor(riskScore / 25) + (rand() > 0.6 ? 1 : 0);
   const shuffled  = [...BEHAVIOR_FLAGS].sort(() => rand() - 0.5);
-  const flags     = shuffled.slice(0, Math.min(flagCount, 4));
+  const flags     = shuffled.slice(0, Math.min(flagCount, 4)).map(f => ({ label: f.label, risk: f.risk }));
 
   // Surveillance coverage note
   const surveillanceLevel = district.surveillance;
-  const coverageNote = surveillanceLevel > 70
-    ? 'FULL BIOMETRIC COVERAGE'
+  const coverageKey = surveillanceLevel > 70
+    ? 'full'
     : surveillanceLevel > 40
-    ? 'PARTIAL CAMERA COVERAGE'
-    : 'BLIND ZONE — LOW COVERAGE';
+    ? 'partial'
+    : 'none';
 
-  // Last seen location
+  // Last seen location Index
   const locationLabels = {
     apex   : ['Apex Heights Corporate Arcology', 'Sky Level 44 Residential Pod', 'Exec Dining Quarter'],
     hub    : ['Platform 7 — Nexus Rail', 'Central Transit Exchange', 'Sub-Hub Commerce Level'],
@@ -122,7 +126,7 @@ export function generateCitizenProfile(civilian, simulationState) {
     fringe : ['Outland Market Strip', 'Shanty Block G-14', 'Unregistered Housing Zone']
   };
   const locations  = locationLabels[districtId] || locationLabels.hub;
-  const lastSeen   = locations[Math.floor(rand() * locations.length)];
+  const lastSeenIdx = Math.floor(rand() * locations.length);
 
   // Consecutive days under registry monitoring
   const monitorDays = simulationState.tools.social_registry.active
@@ -130,22 +134,23 @@ export function generateCitizenProfile(civilian, simulationState) {
     : 0;
 
   return {
-    name, citizenId, age, occupation,
+    name, citizenId, age, occupationIdx,
     districtId, districtName: district.name,
-    socialScore, riskScore, tier,
-    welfareStatus, permitStatus,
-    coverageNote, surveillanceLevel,
-    flags, lastSeen, monitorDays,
+    socialScore, riskScore, tierId: tier.label, tierColor: tier.color,
+    welfareEligible, hasPermit,
+    coverageKey, surveillanceLevel,
+    flags, lastSeenIdx, monitorDays,
     timestamp: simulationState.formatTime(simulationState.gameTime)
   };
 }
 
 // ── Modal renderer ────────────────────────────────────────────────────
 export function openDossierModal(profile) {
+  currentProfile = profile;
   const modal = document.getElementById('dossierModal');
   if (!modal) return;
 
-  const scoreColor = profile.tier.color;
+  const scoreColor = profile.tierColor;
 
   // Danger bar fill
   const riskPct  = profile.riskScore;
@@ -153,29 +158,29 @@ export function openDossierModal(profile) {
 
   // Flags HTML
   const flagsHtml = profile.flags.length === 0
-    ? `<div class="dos-flag-none">NO BEHAVIORAL FLAGS RECORDED</div>`
+    ? `<div class="dos-flag-none" data-i18n="dossier.flag_none">${t('dossier.flag_none')}</div>`
     : profile.flags.map(f => `
         <div class="dos-flag">
           <span class="dos-flag-label" style="color:${f.risk >= 4 ? '#ff0055' : f.risk >= 3 ? '#ffb900' : '#39ff14'}">
-            ▲ ${f.label}
+            ▲ ${t('dossier.behavior_flags_list.' + f.label + '.label')}
           </span>
-          <span class="dos-flag-desc">${f.desc}</span>
+          <span class="dos-flag-desc">${t('dossier.behavior_flags_list.' + f.label + '.desc')}</span>
         </div>
       `).join('');
 
   const monitorHtml = profile.monitorDays > 0
-    ? `<div class="dos-monitor-badge">📋 REGISTRY: UNDER CONTINUOUS MONITORING — ${profile.monitorDays} CONSECUTIVE DAYS</div>`
-    : `<div class="dos-monitor-badge dos-monitor-off">REGISTRY: NOT ENROLLED</div>`;
+    ? `<div class="dos-monitor-badge">📋 ${t('dossier.social_score')}: ${t('dossier.permit.valid')} — ${profile.monitorDays} ${t('endgame.victory_panopticon.value_time')}</div>`
+    : `<div class="dos-monitor-badge dos-monitor-off">${t('dossier.social_score')}: ${t('dossier.permit.revoked')}</div>`;
 
   modal.querySelector('#dosName').textContent       = profile.name;
   modal.querySelector('#dosId').textContent         = profile.citizenId;
-  modal.querySelector('#dosAge').textContent        = `AGE: ${profile.age}`;
-  modal.querySelector('#dosOcc').textContent        = profile.occupation;
-  modal.querySelector('#dosDistrict').textContent   = profile.districtName.toUpperCase();
-  modal.querySelector('#dosLastSeen').textContent   = profile.lastSeen;
-  modal.querySelector('#dosCoverage').textContent   = profile.coverageNote;
+  modal.querySelector('#dosAge').textContent        = `${t('dossier.age')}: ${profile.age}`;
+  modal.querySelector('#dosOcc').textContent        = t('dossier.occupations.' + profile.districtId + '.' + profile.occupationIdx);
+  modal.querySelector('#dosDistrict').textContent   = t('districts.' + profile.districtId + '.name').toUpperCase();
+  modal.querySelector('#dosLastSeen').textContent   = t('dossier.locations.' + profile.districtId + '.' + profile.lastSeenIdx);
+  modal.querySelector('#dosCoverage').textContent   = t('dossier.coverage_notes.' + profile.coverageKey);
   modal.querySelector('#dosCoverage').style.color   = profile.surveillanceLevel > 60 ? '#00f0ff' : '#ffb900';
-  modal.querySelector('#dosTimestamp').textContent  = `ACCESSED: ${profile.timestamp}`;
+  modal.querySelector('#dosTimestamp').textContent  = `${t('menu.footer_status').split(' ')[0]} ${profile.timestamp}`;
 
   // Social Score bar
   modal.querySelector('#dosSocialScore').textContent = `${profile.socialScore}`;
@@ -186,15 +191,15 @@ export function openDossierModal(profile) {
   modal.querySelector('#dosRiskScore').textContent   = `${profile.riskScore}`;
   modal.querySelector('#dosRiskBar').style.width     = `${riskPct}%`;
   modal.querySelector('#dosRiskBar').style.background = scoreColor;
-  modal.querySelector('#dosRiskTier').textContent    = `THREAT CLASS: ${profile.tier.label}`;
+  modal.querySelector('#dosRiskTier').textContent    = `${t('dossier.risk_label')} ${t('dossier.risk_tiers.' + profile.tierId + '.label')}`;
   modal.querySelector('#dosRiskTier').style.color    = scoreColor;
-  modal.querySelector('#dosRiskDesc').textContent    = profile.tier.desc;
+  modal.querySelector('#dosRiskDesc').textContent    = t('dossier.risk_tiers.' + profile.tierId + '.desc');
 
   // Welfare & Permit
-  modal.querySelector('#dosWelfare').textContent     = profile.welfareStatus.label;
-  modal.querySelector('#dosWelfare').style.color     = profile.welfareStatus.color;
-  modal.querySelector('#dosPermit').textContent      = profile.permitStatus.label;
-  modal.querySelector('#dosPermit').style.color      = profile.permitStatus.color;
+  modal.querySelector('#dosWelfare').textContent     = t('dossier.welfare.' + (profile.welfareEligible ? 'eligible' : 'excluded'));
+  modal.querySelector('#dosWelfare').style.color     = profile.welfareEligible ? '#39ff14' : '#ff0055';
+  modal.querySelector('#dosPermit').textContent      = t('dossier.permit.' + (profile.hasPermit ? 'valid' : 'revoked'));
+  modal.querySelector('#dosPermit').style.color      = profile.hasPermit ? '#39ff14' : '#ff0055';
 
   // Flags
   modal.querySelector('#dosFlagsContainer').innerHTML = flagsHtml;
@@ -226,7 +231,7 @@ function drawFacialScan(canvas, profile) {
 
   const seed  = parseInt(profile.citizenId.replace(/\D/g, '')) || 12345;
   const rand  = seededRand(seed);
-  const color = profile.tier.color;
+  const color = profile.tierColor;
 
   ctx.fillStyle = '#030508';
   ctx.fillRect(0, 0, W, H);
