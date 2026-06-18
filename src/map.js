@@ -298,6 +298,7 @@ export class TacticalMap {
 
     // Check civilian hover
     const nearCiv = this.getCivilianAt(mx, my);
+    this.hoveredCivilian = nearCiv;
     if (hover) {
       this.canvas.style.cursor = 'pointer';
     } else if (nearCiv) {
@@ -1209,6 +1210,118 @@ export class TacticalMap {
 
       ctx.restore();
     }
+  drawRadarSweep() {
+    const ctx = this.ctx;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const r = Math.max(w, h);
+
+    const angle = (Date.now() * 0.0006) % (Math.PI * 2);
+
+    ctx.save();
+    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    gradient.addColorStop(0, 'rgba(94, 131, 166, 0.08)');
+    gradient.addColorStop(1, 'rgba(94, 131, 166, 0)');
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, angle, angle + Math.PI / 6, false);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(94, 131, 166, 0.22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle + Math.PI / 6) * r, cy + Math.sin(angle + Math.PI / 6) * r);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  drawMapBorders() {
+    const ctx = this.ctx;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    ctx.save();
+    ctx.strokeStyle = '#1d2e42';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(10, 10, w - 20, h - 20);
+
+    ctx.fillStyle = '#53768d';
+    ctx.font = '7px monospace';
+    
+    // Border coordinates
+    for (let x = 40; x < w - 20; x += 60) {
+      ctx.beginPath();
+      ctx.moveTo(x, 10);
+      ctx.lineTo(x, 14);
+      ctx.stroke();
+      ctx.fillText(`${Math.round(x)}E`, x - 8, 8);
+    }
+
+    for (let y = 40; y < h - 20; y += 60) {
+      ctx.beginPath();
+      ctx.moveTo(10, y);
+      ctx.lineTo(14, y);
+      ctx.stroke();
+      ctx.fillText(`${Math.round(y)}N`, 16, y + 2);
+    }
+
+    // Scale bar
+    const scaleX = w - 100;
+    const scaleY = h - 25;
+    ctx.strokeStyle = '#53768d';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(scaleX, scaleY);
+    ctx.lineTo(scaleX + 60, scaleY);
+    ctx.moveTo(scaleX, scaleY - 3);
+    ctx.lineTo(scaleX, scaleY + 3);
+    ctx.moveTo(scaleX + 60, scaleY - 3);
+    ctx.lineTo(scaleX + 60, scaleY + 3);
+    ctx.stroke();
+
+    ctx.fillStyle = '#53768d';
+    ctx.fillText('SCALE 1:25000', scaleX + 2, scaleY - 5);
+    ctx.restore();
+  }
+
+  drawTargetBrackets(x, y, size, color) {
+    const ctx = this.ctx;
+    const half = size / 2;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.2;
+
+    ctx.beginPath();
+    ctx.moveTo(x - half, y - half + 4);
+    ctx.lineTo(x - half, y - half);
+    ctx.lineTo(x - half + 4, y - half);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x + half, y - half + 4);
+    ctx.lineTo(x + half, y - half);
+    ctx.lineTo(x + half - 4, y - half);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x - half, y + half - 4);
+    ctx.lineTo(x - half, y + half);
+    ctx.lineTo(x - half + 4, y + half);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x + half, y + half - 4);
+    ctx.lineTo(x + half, y + half);
+    ctx.lineTo(x + half - 4, y + half);
+    ctx.stroke();
+
+    ctx.restore();
   }
 
   /* ─── Main Render ───────────────────────────────────────────────── */
@@ -1217,7 +1330,7 @@ export class TacticalMap {
     this.updateActors();
 
     // Background
-    this.ctx.fillStyle = '#04060a';
+    this.ctx.fillStyle = '#060a0f';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.drawGrid();
@@ -1230,12 +1343,26 @@ export class TacticalMap {
     if (this.mapMode === 'heatmap') this.drawHeatmaps();
     else if (this.mapMode === 'coverage') this.drawCoverage();
 
+    this.drawRadarSweep();
     this.drawBuildings();
     this.drawPolicyOverlays();
     this.drawProtests();
     this.drawActors();
     this.drawSweep();
     this.drawDistrictNodeBases();
+
+    // Draw active target brackets
+    if (this.selectedDistrictId) {
+      const d = this.state.districts[this.selectedDistrictId];
+      const c = this.dc(d);
+      this.drawTargetBrackets(c.x, c.y, 66, '#00f0ff');
+    }
+
+    if (this.hoveredCivilian && this.hoveredCivilian.cx) {
+      this.drawTargetBrackets(this.hoveredCivilian.cx, this.hoveredCivilian.cy, 18, '#ffffff');
+    }
+
+    this.drawMapBorders();
     this.drawRain();
   }
 }

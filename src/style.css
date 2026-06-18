@@ -39,7 +39,7 @@ body {
   position: relative;
 }
 
-/* CRT Screen Effects */
+/* Clean Contemporary Screen Overlay */
 .crt::after {
   content: " ";
   display: block;
@@ -48,49 +48,18 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-  background: radial-gradient(circle, rgba(18, 32, 48, 0) 60%, rgba(0, 0, 0, 0.7) 120%);
+  background: radial-gradient(circle, rgba(14, 21, 30, 0) 70%, rgba(3, 5, 8, 0.4) 150%);
   opacity: 0.8;
   z-index: 9999;
   pointer-events: none;
 }
 
 .scanlines {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
-  ), linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.04),
-    rgba(0, 255, 0, 0.01),
-    rgba(0, 0, 255, 0.04)
-  );
-  background-size: 100% 4px, 6px 100%;
-  z-index: 9998;
-  pointer-events: none;
-}
-
-@keyframes flicker {
-  0% { opacity: 0.985; }
-  50% { opacity: 0.995; }
-  100% { opacity: 0.985; }
+  display: none;
 }
 
 .screen-flicker {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(18, 30, 45, 0.005);
-  opacity: 0.2;
-  pointer-events: none;
-  z-index: 9997;
-  animation: flicker 0.15s infinite;
+  display: none;
 }
 
 /* Typography Utilities */
@@ -1488,3 +1457,451 @@ body {
 .canvas-hint-citizen {
   cursor: crosshair !important;
 }
+
+/* ════════════════════════════════════════
+   CONTEMPORARY GIS MAIN MENU & AUTH PORTAL
+   ════════════════════════════════════════ */
+.overlay-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, #0e1622 30%, #06090e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  opacity: 1;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.overlay-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.menu-container {
+  width: 880px;
+  height: 580px;
+  background: rgba(14, 22, 34, 0.95);
+  border: 1px solid #20364d;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.menu-container::before, .menu-container::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: #5e83a6;
+  border-style: solid;
+  pointer-events: none;
+}
+.menu-container::before { top: -1px; left: -1px; border-width: 3px 0 0 3px; }
+.menu-container::after { bottom: -1px; right: -1px; border-width: 0 3px 3px 0; }
+
+.menu-header {
+  height: 36px;
+  border-bottom: 1px solid #20364d;
+  background: #0b111a;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #8faec4;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #39ff14;
+  border-radius: 50%;
+  margin-right: 8px;
+  display: inline-block;
+  box-shadow: 0 0 6px #39ff14;
+}
+
+.status-dot.blink {
+  animation: status-blink 1.2s infinite steps(2, start);
+}
+
+@keyframes status-blink {
+  to { visibility: hidden; }
+}
+
+.menu-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 310px;
+  gap: 20px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.menu-logo-area {
+  grid-column: 1 / 3;
+  text-align: center;
+  border-bottom: 1px solid rgba(32, 54, 77, 0.5);
+  padding-bottom: 15px;
+  margin-bottom: 5px;
+}
+
+.menu-logo {
+  font-family: var(--font-hud);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+}
+
+.menu-subtitle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #5e84a2;
+  letter-spacing: 3px;
+  margin-top: 4px;
+}
+
+.menu-options-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.menu-section-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: #53768d;
+  letter-spacing: 1.2px;
+  border-left: 2px solid #5e83a6;
+  padding-left: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.regime-profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.profile-card {
+  background: rgba(8, 13, 20, 0.5);
+  border: 1px solid #20364d;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: border-color 0.2s, background-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profile-card:hover {
+  background: rgba(94, 131, 166, 0.08);
+  border-color: #5e83a6;
+}
+
+.profile-card.active {
+  background: rgba(94, 131, 166, 0.15);
+  border-color: #8faec4;
+  box-shadow: 0 0 10px rgba(94, 131, 166, 0.2);
+}
+
+.profile-card-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+}
+
+.card-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: #53768d;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 1px;
+}
+
+.profile-card.active .card-title {
+  color: #8faec4;
+}
+
+.profile-desc {
+  font-size: 10px;
+  color: #7ba3bf;
+  line-height: 1.35;
+  margin-bottom: 8px;
+  flex: 1;
+}
+
+.profile-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: #8faec4;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border-radius: 2px;
+}
+
+.menu-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(8, 13, 20, 0.5);
+  border: 1px solid #20364d;
+  padding: 8px 12px;
+  border-radius: 3px;
+}
+
+.menu-input-row label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #5e84a2;
+}
+
+.menu-input-row input {
+  background: #070a0f;
+  border: 1px solid #20364d;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 4px 8px;
+  flex: 1;
+  border-radius: 2px;
+  outline: none;
+}
+
+.menu-input-row input:focus {
+  border-color: #5e83a6;
+}
+
+.menu-boot-btn {
+  width: 100%;
+  height: 42px;
+  margin-top: auto;
+  background: #1d3249;
+  border: 1px solid #365475;
+  font-family: var(--font-hud);
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.menu-boot-btn:hover {
+  background: #2b496a;
+  border-color: #5e83a6;
+  box-shadow: 0 0 12px rgba(94, 131, 166, 0.25);
+}
+
+.menu-boot-btn:active {
+  transform: translateY(1px);
+}
+
+/* Sidebar boot messages */
+.menu-sidebar-logs {
+  background: #0b111a;
+  border: 1px solid #20364d;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.menu-logs-box {
+  flex: 1;
+  background: #04070a;
+  border: 1px solid rgba(32, 54, 77, 0.5);
+  padding: 8px;
+  font-family: var(--font-code);
+  font-size: 9px;
+  color: #6a95b8;
+  overflow-y: auto;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.menu-logs-box span {
+  display: block;
+}
+
+.menu-logs-box .log-system {
+  color: #8faec4;
+}
+
+.menu-logs-box .log-warning {
+  color: var(--color-yellow);
+}
+
+.menu-footer {
+  height: 28px;
+  border-top: 1px solid #20364d;
+  background: #070b12;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: #4b677e;
+}
+
+/* ════════════════════════════════════════
+   CONTEMPORARY GIS HUD OVERHAUL
+   ════════════════════════════════════════ */
+.panel::before, .panel::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: #3b5a75;
+  border-style: solid;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.panel::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.panel::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.panel-header {
+  background: linear-gradient(90deg, rgba(32, 54, 77, 0.25) 0%, transparent 100%);
+  position: relative;
+}
+
+.panel-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, #32364d 0%, transparent 100%);
+}
+
+.metric-card {
+  position: relative;
+  background: rgba(14, 24, 38, 0.35);
+  border: 1px solid #1a2c3d;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 6px;
+  height: 6px;
+  border-top: 1px solid #5e83a6;
+  border-left: 1px solid #5e83a6;
+  pointer-events: none;
+}
+
+/* Dossier Biometric Scan Horizontal scan animation */
+.dos-face-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.dos-face-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(0, 240, 255, 0.7);
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.8);
+  animation: dossier-scan-vertical 2.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes dossier-scan-vertical {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+/* Warning alert vignette */
+.alert-active-frame {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-shadow: inset 0 0 40px rgba(255, 0, 85, 0.5);
+  border: 3px solid rgba(255, 0, 85, 0.6);
+  pointer-events: none;
+  z-index: 9995;
+  animation: alert-vignette-pulse 2s infinite ease-in-out;
+  display: none;
+}
+
+@keyframes alert-vignette-pulse {
+  0% { opacity: 0.4; box-shadow: inset 0 0 30px rgba(255, 0, 85, 0.3); }
+  50% { opacity: 1.0; box-shadow: inset 0 0 60px rgba(255, 0, 85, 0.7); }
+  100% { opacity: 0.4; box-shadow: inset 0 0 30px rgba(255, 0, 85, 0.3); }
+}
+
+/* Clean Custom Slider Styling */
+input[type="range"].tool-slider {
+  -webkit-appearance: none;
+  background: #090e15;
+  border: 1px solid #1c2e42;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"].tool-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #8faec4;
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.1s;
+}
+
+input[type="range"].tool-slider::-webkit-slider-thumb:hover {
+  background: #ffffff;
+}
+
+/* Decorative map hud */
+.hud-overlay-text {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: #53768d;
+  letter-spacing: 0.5px;
+  background: rgba(4, 7, 12, 0.85);
+  padding: 3px 6px;
+  border: 1px solid #1a2d3e;
+  border-radius: 2px;
+  pointer-events: none;
+}
+

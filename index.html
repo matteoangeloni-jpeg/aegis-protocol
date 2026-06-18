@@ -12,10 +12,86 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="crt">
-  <!-- Scanline Overlay -->
-  <div class="scanlines"></div>
-  <div class="screen-flicker"></div>
-  
+  <div class="alert-active-frame" id="alertFrame"></div>
+  <!-- Main Menu / Title Screen -->
+  <div class="overlay-screen" id="mainMenu">
+    <div class="menu-container">
+      <div class="menu-header">
+        <span class="status-dot blink"></span> OPERATOR LOGIN PORTAL // VERIDIA SECURE AGENCY
+      </div>
+      <div class="menu-content">
+        <div class="menu-logo-area">
+          <div class="menu-logo">AEGIS SYSTEM</div>
+          <div class="menu-subtitle">MUNICIPAL REGISTRY & CONTROL INTERFACE</div>
+        </div>
+        
+        <div class="menu-options-panel">
+          <div class="menu-section-label">SYSTEM CONFIGURATION PROFILE</div>
+          <div class="regime-profiles-grid">
+            <div class="profile-card active" data-profile="standard">
+              <div class="profile-card-header">
+                <span class="card-tag">SYS-STD</span>
+                <span class="card-title">STANDARD POLICY</span>
+              </div>
+              <p class="profile-desc">Balanced monitoring and credit reserve allocations. Standard predictive parameters.</p>
+              <div class="profile-stats">
+                <span>RESERVES: 500cr</span>
+                <span>COMPLIANCE: 30%</span>
+                <span>PUBLIC TRUST: 75%</span>
+              </div>
+            </div>
+            
+            <div class="profile-card" data-profile="iron_shield">
+              <div class="profile-card-header">
+                <span class="card-tag">ENF-09</span>
+                <span class="card-title">OPTIMIZED SEC</span>
+              </div>
+              <p class="profile-desc">Compliance heavy. Pre-authorized tracking increases starting submission but depletes public trust.</p>
+              <div class="profile-stats text-yellow">
+                <span>RESERVES: 350cr</span>
+                <span>COMPLIANCE: 45%</span>
+                <span>PUBLIC TRUST: 60%</span>
+              </div>
+            </div>
+
+            <div class="profile-card" data-profile="neural_test">
+              <div class="profile-card-header">
+                <span class="card-tag">EXP-V04</span>
+                <span class="card-title">VOLATILE ALGO</span>
+              </div>
+              <p class="profile-desc">High experimental funding, but the city exhibits a volatile grassroots friction baseline.</p>
+              <div class="profile-stats text-red">
+                <span>RESERVES: 800cr</span>
+                <span>COMPLIANCE: 20%</span>
+                <span>PUBLIC TRUST: 85%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="menu-input-row">
+            <label for="regimeOperator">OPERATOR ID:</label>
+            <input type="text" id="regimeOperator" value="ADMIN-982_VERIDIA" maxlength="16">
+          </div>
+          
+          <button class="menu-boot-btn" id="btnBootSystem">
+            CONNECT TO CITY MATRIX
+          </button>
+        </div>
+        
+        <div class="menu-sidebar-logs">
+          <div class="menu-section-label">BOOT TELEMETRY</div>
+          <div class="menu-logs-box" id="menuLogsBox">
+            <!-- Simulated logs print out automatically on load -->
+          </div>
+        </div>
+      </div>
+      <div class="menu-footer">
+        <span>STATE CODE: NOVA_VERIDIA_GIS</span>
+        <span>SYSTEM STATUS: AWAITING AUTHORIZATION...</span>
+      </div>
+    </div>
+  </div>
+
   <div id="app" class="hud-container">
     <!-- Header bar -->
     <header class="hud-header">

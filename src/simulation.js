@@ -14,14 +14,30 @@ export class CitySimulation {
     this.reset();
   }
 
-  reset() {
+  reset(profile = 'standard') {
     this.gameTime = 0; // in seconds
     this.currentSpeed = 1; // 0 = pause, 1 = 1x, 2 = 2x
-    this.credits = 450;
-    this.globalCompliance = 30; // %
-    this.globalTrust = 75; // %
-    this.globalEfficiency = 85; // %
-    this.globalRisk = 15; // %
+    this.selectedProfile = profile;
+    
+    if (profile === 'iron_shield') {
+      this.credits = 350;
+      this.globalCompliance = 45;
+      this.globalTrust = 60;
+      this.globalEfficiency = 80;
+      this.globalRisk = 25;
+    } else if (profile === 'neural_test') {
+      this.credits = 800;
+      this.globalCompliance = 20;
+      this.globalTrust = 85;
+      this.globalEfficiency = 90;
+      this.globalRisk = 30;
+    } else { // standard
+      this.credits = 500;
+      this.globalCompliance = 30;
+      this.globalTrust = 75;
+      this.globalEfficiency = 85;
+      this.globalRisk = 15;
+    }
     
     // Narrative flags
     this.whistleblowerProgress = 0; // 0 to 100
@@ -92,9 +108,21 @@ export class CitySimulation {
         anomalies: [],
         x: 0.22,
         y: 0.75,
-        color: '#ff0055'
       }
     };
+
+    // Apply profile modifications to districts
+    if (profile === 'iron_shield') {
+      for (const id in this.districts) {
+        this.districts[id].compliance = Math.min(100, this.districts[id].compliance + 15);
+        this.districts[id].unrest = Math.max(0, this.districts[id].unrest - 5);
+      }
+    } else if (profile === 'neural_test') {
+      for (const id in this.districts) {
+        this.districts[id].unrest = Math.min(100, this.districts[id].unrest + 20);
+        this.districts[id].compliance = Math.max(0, this.districts[id].compliance - 10);
+      }
+    }
 
     // Tools Configuration
     // State represents active (true/false) and value represents slider value (0-100) or severity

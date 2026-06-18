@@ -207,15 +207,22 @@ export class GameUI {
     el.gameTime.textContent = this.sim.formatTime(this.sim.gameTime);
 
     // Dynamic Regime Threat Labels
+    const alertFrame = document.getElementById('alertFrame');
     if (this.sim.globalRisk > 60 || this.sim.globalTrust < 30) {
       el.threatLevel.textContent = 'CRITICAL THREAT';
       el.threatLevel.className = 'status-value threat-high';
+      if (alertFrame) alertFrame.style.display = 'block';
+      if (this.sim.gameTime % 5 === 0) {
+        synthAudio.playAlarm();
+      }
     } else if (this.sim.globalRisk > 35) {
       el.threatLevel.textContent = 'MUTINOUS';
       el.threatLevel.className = 'status-value threat-med';
+      if (alertFrame) alertFrame.style.display = 'none';
     } else {
       el.threatLevel.textContent = 'STABLE';
       el.threatLevel.className = 'status-value threat-low';
+      if (alertFrame) alertFrame.style.display = 'none';
     }
 
     // Regime sparkline chart

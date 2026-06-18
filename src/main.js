@@ -19,6 +19,8 @@ class GameOrchestrator {
     this.selectedDistrictId = null;
     this.tickInterval = 1000; // 1s default
     this.animationFrameId = null;
+    this.isMenuOpen = true;
+    this.selectedProfile = 'standard';
     
     this.init();
   }
@@ -38,12 +40,96 @@ class GameOrchestrator {
     // 3. Render Governance Tools list
     this.updateToolsList();
 
-    // 4. Print initial system logs
-    this.runSystemBootSequence();
+    // 4. Set up the operator login portal
+    this.initMenu();
 
     // 5. Start Game Loop
     this.lastTickTime = performance.now();
     this.loop();
+  }
+
+  initMenu() {
+    const cards = document.querySelectorAll('.profile-card');
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        this.selectedProfile = card.getAttribute('data-profile');
+        synthAudio.playToggle(true);
+      });
+    });
+
+    const operatorInput = document.getElementById('regimeOperator');
+    if (operatorInput) {
+      operatorInput.addEventListener('input', () => {
+        synthAudio.playType();
+      });
+    }
+
+    const logBox = document.getElementById('menuLogsBox');
+    const bootBtn = document.getElementById('btnBootSystem');
+
+    const menuInitialLogs = [
+      'SYS_INIT: LAUNCHING AUTHENTICATION INTEGRITY CHECKS...',
+      'PORTAL_ONLINE: AWAITING MUNICIPAL REGISTRY PROFILE...',
+      'READY.'
+    ];
+    
+    menuInitialLogs.forEach((line, idx) => {
+      setTimeout(() => {
+        if (logBox) {
+          const span = document.createElement('span');
+          span.className = 'log-system';
+          span.textContent = `[${new Date().toLocaleTimeString()}] ${line}`;
+          logBox.appendChild(span);
+          logBox.scrollTop = logBox.scrollHeight;
+        }
+      }, idx * 250);
+    });
+
+    bootBtn.addEventListener('click', () => {
+      synthAudio.playSuccess();
+      bootBtn.disabled = true;
+      if (operatorInput) operatorInput.disabled = true;
+      cards.forEach(c => c.style.pointerEvents = 'none');
+
+      const bootSteps = [
+        'DECRYPTING OPERATOR SECURITY CLEARANCE...',
+        'REGISTRY PROFILE SELECTION: ' + this.selectedProfile.toUpperCase(),
+        'LINKING MUNICIPAL DRONE GIS NETWORKS...',
+        'ESTABLISHING GEOSYNCHRONOUS STAT HANDSHAKE...',
+        'REGIME PORTAL CONNECTED. CONNECTING TO HOST GRID.'
+      ];
+
+      bootSteps.forEach((step, idx) => {
+        setTimeout(() => {
+          if (logBox) {
+            const span = document.createElement('span');
+            span.className = step.includes('CONNECTED') ? 'log-warning' : 'log-system';
+            span.textContent = `[${new Date().toLocaleTimeString()}] [OK] ${step}`;
+            logBox.appendChild(span);
+            logBox.scrollTop = logBox.scrollHeight;
+          }
+          synthAudio.playToggle(true);
+
+          if (idx === bootSteps.length - 1) {
+            setTimeout(() => {
+              const menu = document.getElementById('mainMenu');
+              if (menu) menu.classList.add('hidden');
+              
+              // Initialize actual simulation state with profile
+              this.isMenuOpen = false;
+              this.sim.reset(this.selectedProfile);
+              this.ui.updateMetrics();
+              this.updateToolsList();
+              
+              // Run HUD screen loading logs
+              this.runSystemBootSequence();
+            }, 800);
+          }
+        }, (idx + 1) * 350);
+      });
+    });
   }
 
   bindEvents() {
@@ -218,8 +304,8 @@ class GameOrchestrator {
     const now = performance.now();
     const elapsed = now - this.lastTickTime;
     
-    // Adjust target time based on simulation speeds (and skip if paused)
-    if (this.sim.currentSpeed > 0 && !this.sim.activeDialogue) {
+    // Adjust target time based on simulation speeds (and skip if paused/menu open)
+    if (this.sim.currentSpeed > 0 && !this.sim.activeDialogue && !this.isMenuOpen) {
       const speedMultiplier = this.sim.currentSpeed;
       const targetInterval = this.tickInterval / speedMultiplier;
       
